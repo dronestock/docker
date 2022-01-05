@@ -1,0 +1,44 @@
+kind: pipeline
+type: docker
+name: Drone持续集成Docker插件
+
+
+clone:
+  disable: true
+
+
+trigger:
+  event:
+    exclude:
+      - pull_request
+
+
+steps:
+  - name: 拉代码
+    image: dronestock/git
+    pull: always
+    settings:
+      verbose: true
+
+  - name: 编译
+    image: storezhang/pangu
+    pull: always
+    settings:
+      output: git
+
+  - name: 打包Docker到中央仓库
+    image: plugins/docker
+    pull: if-not-exists
+    when:
+      branch:
+        - develop
+        - master
+    settings:
+      repo: dronestock/docker
+      tags:
+        - latest
+      compress: true
+      mirror: https://mirror.ccs.tencentyun.com
+      username: dronestock
+      password:
+        from_secret: token_docker
