@@ -20,8 +20,8 @@ type config struct {
 	SSHKey string `default:"${PLUGIN_SSH_KEY=${SSH_KEY}}"`
 	// 目录
 	Folder string `default:"${PLUGIN_FOLDER=${FOLDER=.}}" validate:"required"`
-	// 目录列表
-	Folders []string `default:"${PLUGIN_FOLDERS=${FOLDERS}}"`
+	// 镜像列表
+	Mirrors []string `default:"${PLUGIN_MIRRORS=${MIRRORS}}"`
 	// 分支
 	Branch string `default:"${PLUGIN_BRANCH=${BRANCH=master}}" validate:"required_without=Commit"`
 	// 标签
