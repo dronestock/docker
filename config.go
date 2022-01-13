@@ -12,38 +12,15 @@ import (
 )
 
 type config struct {
-	// 远程仓库地址
-	Remote string `default:"${PLUGIN_REMOTE=${REMOTE=${DRONE_GIT_HTTP_URL}}}" validate:"required"`
-	// 模式
-	Mode string `default:"${PLUGIN_MODE=${MODE=push}}"`
-	// SSH密钥
-	SSHKey string `default:"${PLUGIN_SSH_KEY=${SSH_KEY}}"`
 	// 目录
 	Folder string `default:"${PLUGIN_FOLDER=${FOLDER=.}}" validate:"required"`
 	// 镜像列表
 	Mirrors []string `default:"${PLUGIN_MIRRORS=${MIRRORS}}"`
-	// 分支
-	Branch string `default:"${PLUGIN_BRANCH=${BRANCH=master}}" validate:"required_without=Commit"`
 	// 标签
 	Tag string `default:"${PLUGIN_TAG=${TAG}}"`
-	// 作者
-	Author string `default:"${PLUGIN_AUTHOR=${AUTHOR=${DRONE_COMMIT_AUTHOR}}}"`
-	// 邮箱
-	Email string `default:"${PLUGIN_EMAIL=${EMAIL=${DRONE_COMMIT_AUTHOR_EMAIL}}}"`
-	// 提交消息
-	Message string `default:"${PLUGIN_MESSAGE=${MESSAGE=${PLUGIN_COMMIT_MESSAGE=drone}}}"`
-	// 是否强制提交
-	Force bool `default:"${PLUGIN_FORCE=${FORCE=true}}"`
 
-	// 子模块
-	Submodules bool `default:"${PLUGIN_SUBMODULES=${SUBMODULES=true}}"`
-	// 深度
-	Depth int `default:"${PLUGIN_DEPTH=${DEPTH=50}}"`
-	// 提交
-	Commit string `default:"${PLUGIN_COMMIT=${COMMIT=${DRONE_COMMIT}}}" validate:"required_without=Branch"`
-
-	// 是否清理
-	Clear bool `default:"${PLUGIN_CLEAR=${CLEAR=true}}"`
+	// 是否启用默认值
+	Defaults bool `default:"${PLUGIN_DEFAULTS=${DEFAULTS=true}}"`
 	// 是否显示调试信息
 	Verbose bool `default:"${PLUGIN_VERBOSE=${VERBOSE=false}}"`
 
