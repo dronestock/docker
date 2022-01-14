@@ -17,7 +17,7 @@ RUN set -ex \
     \
     \
     && apk update \
-    && apk add docker \
+    && apk --no-cache add docker \
     \
     \
     \
