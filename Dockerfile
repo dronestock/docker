@@ -1,4 +1,4 @@
-FROM docker:20.10.9-dind
+FROM storezhang/alpine
 
 
 LABEL author="storezhang<华寅>"
@@ -16,8 +16,8 @@ RUN set -ex \
     \
     \
     \
-    # && apk update \
-    # && apk add docker \
+    && apk update \
+    && apk add docker \
     \
     \
     \
