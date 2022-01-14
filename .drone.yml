@@ -31,6 +31,7 @@ steps:
     image: dronestock/docker
     pull: if-not-exists
     settings:
+      verbose: true
       repository: dronestock/docker
       username: dronestock
       password:
