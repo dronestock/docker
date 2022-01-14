@@ -118,8 +118,8 @@ func (c *config) init() {
 		`https://docker.mirrors.ustc.edu.cn`,
 	}
 
-	c.exe = `/usr/local/bin/docker`
-	c.daemon = `/usr/local/bin/dockerd`
+	c.exe = `/usr/bin/docker`
+	c.daemon = `/usr/bin/dockerd`
 
 	c.daemonSuccessMark = `API listen on /var/run/docker.sock`
 	c.loginSuccessMark = `Login Succeeded`
