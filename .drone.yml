@@ -16,7 +16,7 @@ trigger:
 steps:
   - name: 拉代码
     image: dronestock/git
-    pull: if-not-exists
+    pull: always
     settings:
       verbose: true
 
