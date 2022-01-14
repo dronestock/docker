@@ -25,6 +25,7 @@ steps:
     pull: if-not-exists
     settings:
       output: docker
+      verbose: true
 
   - name: 打包Docker到仓库
     image: dronestock/docker
