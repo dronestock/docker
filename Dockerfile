@@ -30,6 +30,5 @@ RUN set -ex \
     && rm -rf /var/cache/apk/*
 
 
-
 # 执行命令
 ENTRYPOINT /bin/docker
