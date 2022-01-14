@@ -1,50 +1,61 @@
 package main
 
 import (
+	`fmt`
+	`strings`
+
+	`github.com/storezhang/gex`
+	`github.com/storezhang/gox`
+	`github.com/storezhang/gox/field`
 	`github.com/storezhang/simaqian`
 )
 
 func push(conf *config, logger simaqian.Logger) (err error) {
-	// 设置默认分支
-	if err = git(conf, logger, `config`, `--global`, `init.defaultBranch`, `master`); nil != err {
+	if `` == strings.TrimSpace(conf.Repository) {
 		return
 	}
-	// 设置用户名
-	if err = git(conf, logger, `config`, `--global`, `user.name`, conf.Author); nil != err {
-		return
-	}
-	// 设置邮箱
-	if err = git(conf, logger, `config`, `--global`, `user.email`, conf.Email); nil != err {
-		return
-	}
-	// 初始化目录
-	if err = git(conf, logger, `init`); nil != err {
-		return
-	}
-	// 添加当前目录到Git中
-	if err = git(conf, logger, `add`, `.`); nil != err {
-		return
-	}
-	// 提交
-	if err = git(conf, logger, `commit`, `.`, `--message`, conf.Message); nil != err {
-		return
-	}
-	// 添加远程仓库地址
-	if err = git(conf, logger, `remote`, `add`, `origin`, conf.Remote); nil != err {
-		return
-	}
-	// 如果有标签，推送标签
-	if `` != conf.Tag {
-		if err = git(conf, logger, `tag`, `--annotate`, conf.Tag, `--message`, conf.Message); nil != err {
+
+	for _, _tag := range conf.tags() {
+		target := fmt.Sprintf(`%s:%s`, conf.Repository, _tag)
+		tagArgs := []string{
+			`tag`,
+			conf.Name,
+			target,
+		}
+
+		// 记录启动日志，方便调试
+		fields := gox.Fields{
+			field.String(`name`, conf.Name),
+			field.String(`registry`, conf.Registry),
+			field.String(`repository`, conf.Repository),
+			field.String(`tag`, _tag),
+		}
+
+		tagOptions := gex.NewOptions(gex.Args(tagArgs...))
+		if !conf.Verbose {
+			tagOptions = append(tagOptions, gex.Quiet())
+		}
+		if _, err = gex.Run(conf.exe, tagOptions...); nil != err {
+			logger.Error(`给Docker打标签出错`, fields.Connect(field.Error(err))...)
+		}
+		if nil != err {
 			return
 		}
-		if err = git(conf, logger, `push`, `--set-upstream`, `origin`, conf.Tag, conf.gitForce()); nil != err {
+
+		// 推关到仓库
+		pushArgs := []string{
+			`push`,
+			target,
+		}
+
+		logger.Info(`开始推送镜像到仓库`, fields...)
+		if _, err = gex.Run(conf.exe, gex.Args(pushArgs...)); nil != err {
+			logger.Error(`推送Docker镜像到仓库出错`, fields.Connect(field.Error(err))...)
+		}
+		if nil != err {
 			return
 		}
-	}
-	// 推送
-	if err = git(conf, logger, `push`, `--set-upstream`, `origin`, conf.Branch, conf.gitForce()); nil != err {
-		return
+		logger.Info(`推送镜像到仓库成功`, fields...)
 	}
 
 	return

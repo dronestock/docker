@@ -5,16 +5,18 @@ import (
 )
 
 func setup(conf *config, logger simaqian.Logger) (err error) {
-	// 加速Github
-	if err = github(conf, logger); nil != err {
+	// 启动守护进程
+	if err = daemon(conf, logger); nil != err {
 		return
 	}
-	// 清理目录
-	if err = clear(conf, logger); nil != err {
+
+	// 打印当前Docker信息
+	if err = info(conf, logger); nil != err {
 		return
 	}
-	// 配置SSH
-	if err = ssh(conf, logger); nil != err {
+
+	// 登录
+	if err = login(conf, logger); nil != err {
 		return
 	}
 

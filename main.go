@@ -28,10 +28,10 @@ func main() {
 	if err = setup(conf, logger); nil != err {
 		return
 	}
-	// 推拉代码
-	if conf.pull() {
-		err = pull(conf, logger)
-	} else {
-		err = push(conf, logger)
+	// 编译
+	if err = build(conf, logger); nil != err {
+		return
 	}
+	// 推送
+	err = push(conf, logger)
 }

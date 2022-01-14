@@ -24,21 +24,13 @@ steps:
     image: storezhang/pangu
     pull: always
     settings:
-      output: git
+      output: docker
 
-  - name: 打包Docker到中央仓库
+  - name: 打包Docker到仓库
     image: plugins/docker
     pull: if-not-exists
-    when:
-      branch:
-        - develop
-        - master
     settings:
-      repo: dronestock/docker
-      tags:
-        - latest
-      compress: true
-      mirror: https://mirror.ccs.tencentyun.com
+      repository: dronestock/docker
       username: dronestock
       password:
         from_secret: token_docker
