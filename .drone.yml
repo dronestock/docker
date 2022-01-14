@@ -22,7 +22,7 @@ steps:
 
   - name: 编译
     image: dronstock/pangu
-    pull: if-not-exists
+    pull: always
     settings:
       output: docker
 
