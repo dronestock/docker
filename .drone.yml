@@ -30,6 +30,7 @@ steps:
   - name: 打包Docker到仓库
     image: dronestock/docker
     pull: always
+    privileged: true
     settings:
       verbose: true
       repository: dronestock/docker
