@@ -36,7 +36,7 @@ func push(conf *config, logger simaqian.Logger) (err error) {
 			tagOptions = append(tagOptions, gex.Quiet())
 		}
 		if _, err = gex.Run(conf.exe, tagOptions...); nil != err {
-			logger.Error(`给Docker打标签出错`, fields.Connect(field.Error(err))...)
+			logger.Error(`镜像打标签出错`, fields.Connect(field.Error(err))...)
 		}
 		if nil != err {
 			return
