@@ -1,4 +1,4 @@
-FROM docker:dind
+FROM docker:dind-rootless
 
 
 LABEL author="storezhang<华寅>"
@@ -9,26 +9,8 @@ LABEL description="Drone持续集成Git插件，增加标签功能以及Github�
 
 
 # 复制文件
-COPY docker /bin
-
-
-RUN set -ex \
-    \
-    \
-    \
-    # && apk update \
-    # && apk add docker \
-    \
-    \
-    \
-    # 增加执行权限
-    && chmod +x /bin/docker \
-    \
-    \
-    \
-    && rm -rf /var/cache/apk/*
-
+COPY docker /usr/bin
 
 
 # 执行命令
-ENTRYPOINT /bin/docker
+ENTRYPOINT /usr/bin/docker
