@@ -21,13 +21,13 @@ steps:
       verbose: true
 
   - name: 编译
-    image: storezhang/pangu
+    image: dronstock/pangu
     pull: if-not-exists
     settings:
       output: docker
 
   - name: 打包Docker到仓库
-    image: plugins/docker
+    image: dronestock/docker
     pull: if-not-exists
     settings:
       repository: dronestock/docker
