@@ -16,13 +16,13 @@ trigger:
 steps:
   - name: 拉代码
     image: dronestock/git
-    pull: always
+    pull: if-not-exists
     settings:
       verbose: true
 
   - name: 编译
     image: dronestock/pangu
-    pull: always
+    pull: if-not-exists
     settings:
       output: docker
 
