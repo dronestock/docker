@@ -22,7 +22,7 @@ steps:
 
   - name: 编译
     image: storezhang/pangu
-    pull: always
+    pull: if-not-exists
     settings:
       output: docker
 
