@@ -11,5 +11,8 @@ trim_trailing_whitespace = true
 [*.go]
 indent_style = tab
 
+[hosts]
+indent_style = tab
+
 [*.yml]
 indent_size = 2

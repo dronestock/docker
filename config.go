@@ -60,9 +60,10 @@ type config struct {
 	// 是否显示调试信息
 	Verbose bool `default:"${PLUGIN_VERBOSE=${VERBOSE=false}}"`
 
-	defaultMirrors []string
-	exe            string
-	daemon         string
+	defaultMirrors    []string
+	exe               string
+	daemon            string
+	outsideDockerfile string
 
 	daemonSuccessMark string
 	loginSuccessMark  string
@@ -120,6 +121,7 @@ func (c *config) init() {
 
 	c.exe = `/usr/bin/docker`
 	c.daemon = `/usr/bin/dockerd`
+	c.outsideDockerfile = `/var/run/docker.sock`
 
 	c.daemonSuccessMark = `API listen on /var/run/docker.sock`
 	c.loginSuccessMark = `Login Succeeded`

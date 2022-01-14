@@ -11,6 +11,11 @@ import (
 )
 
 func daemon(conf *config, logger simaqian.Logger) (err error) {
+	// 不必要不启动守护进程
+	if _, statErr := os.Stat(conf.outsideDockerfile); nil == statErr {
+		return
+	}
+
 	args := []string{
 		fmt.Sprintf(`--host=%s`, conf.Host),
 	}
