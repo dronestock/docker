@@ -21,7 +21,7 @@ steps:
       verbose: true
 
   - name: 编译
-    image: dronstock/pangu
+    image: dronestock/pangu
     pull: always
     settings:
       output: docker
