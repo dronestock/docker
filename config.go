@@ -70,9 +70,26 @@ type config struct {
 func (c *config) Fields() gox.Fields {
 	return []gox.Field{
 		field.String(`dockerfile`, c.Dockerfile),
+		field.String(`context`, c.Context),
+		field.String(`host`, c.Host),
 		field.Strings(`mirrors`, c.Mirrors...),
 		field.String(`tag`, c.Tag),
+		field.Bool(`auto.tag`, c.AutoTag),
+		field.String(`name`, c.Name),
 
+		field.Bool(`experimental`, c.Experimental),
+		field.Bool(`squash`, c.Squash),
+		field.Bool(`compress`, c.Compress),
+		field.Strings(`labels`, c.Labels...),
+
+		field.String(`remote`, c.Remote),
+		field.String(`link`, c.Link),
+
+		field.String(`registry`, c.Registry),
+		field.String(`username`, c.Username),
+		field.String(`repository`, c.Repository),
+
+		field.Bool(`defaults`, c.Defaults),
 		field.Bool(`verbose`, c.Verbose),
 	}
 }
