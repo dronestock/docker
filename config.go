@@ -40,6 +40,7 @@ type config struct {
 	// 仓库地址
 	Remote string `default:"${PLUGIN_REMOTE=${REMOTE=${DRONE_REMOTE_URL=https://github.com/dronestock/docker}}}"`
 	// 镜像链接
+	// nolint:lll
 	Link string `default:"${PLUGIN_LINK=${LINK=${PLUGIN_REPO_LINK=${DRONE_REPO_LINK=https://github.com/dronestock/docker}}}}"`
 
 	StoragePath   string
@@ -127,13 +128,9 @@ func (c *config) init() {
 func (c *config) mirrors() (mirrors []string) {
 	mirrors = make([]string, 0, len(c.defaultMirrors))
 	if c.Defaults {
-		for _, mirror := range c.defaultMirrors {
-			mirrors = append(mirrors, mirror)
-		}
+		mirrors = append(mirrors, c.defaultMirrors...)
 	}
-	for _, mirror := range c.Mirrors {
-		mirrors = append(mirrors, mirror)
-	}
+	mirrors = append(mirrors, c.Mirrors...)
 
 	return
 }
@@ -146,9 +143,7 @@ func (c *config) labels() (labels []string) {
 		labels = append(labels, fmt.Sprintf("source=%s", c.Remote))
 		labels = append(labels, fmt.Sprintf("url=%s", c.Link))
 	}
-	for _, label := range c.Labels {
-		labels = append(labels, label)
-	}
+	labels = append(labels, c.Labels...)
 
 	return
 }
