@@ -16,7 +16,7 @@ type config struct {
 	// 配置文件
 	Dockerfile string `default:"${PLUGIN_DOCKERFILE=${DOCKERFILE=Dockerfile}}" validate:"required"`
 	// 上下文
-	Context string `default:"${PLUGIN_CONTEXT=${CONTEXT}}"`
+	Context string `default:"${PLUGIN_CONTEXT=${CONTEXT=.}}"`
 	// 主机
 	Host string `default:"${PLUGIN_HOST=${HOST=unix:///var/run/docker.sock}}" validate:"required"`
 	// 镜像列表
@@ -181,7 +181,7 @@ func (c *config) squash() bool {
 }
 
 func (c *config) context() (context string) {
-	if `.` == c.Context {
+	if `` == c.Context {
 		context = filepath.Dir(c.Dockerfile)
 	} else {
 		context = c.Context
