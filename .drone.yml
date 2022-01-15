@@ -28,7 +28,7 @@ steps:
       verbose: true
 
   - name: 打包Docker到腾讯云
-    image: ccr.ccs.tencentyun.com/dronestock/docker
+    image: ccr.ccs.tencentyun.com/dronestock/docker:0.0.1
     pull: always
     privileged: true
     settings:
