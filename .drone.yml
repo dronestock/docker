@@ -41,7 +41,7 @@ steps:
 
   - name: 打包Docker到中央库
     image: ccr.ccs.tencentyun.com/dronestock/docker
-    pull: always
+    pull: if-not-exists
     failure: ignore
     privileged: true
     settings:
