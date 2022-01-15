@@ -24,7 +24,7 @@ steps:
     image: dronestock/pangu
     pull: if-not-exists
     settings:
-      output: docker
+      output: dockerd
       verbose: true
 
   - name: 打包Docker到腾讯云
