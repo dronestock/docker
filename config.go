@@ -110,12 +110,9 @@ func (c *config) load() (err error) {
 
 func (c *config) init() {
 	c.defaultMirrors = []string{
+		`https://mirror.baidubce.com`,
+		`https://hub.daocloud.io`,
 		`https://mirror.ccs.tencentyun.com`,
-		`https://registry.docker-cn.com`,
-		`https://docker.mirrors.ustc.edu.cn`,
-		`https://hub-mirror.c.163.com`,
-		`https://dockerhub.azk8s.cn`,
-		`https://reg-mirror.qiniu.com`,
 		`https://docker.mirrors.ustc.edu.cn`,
 	}
 
