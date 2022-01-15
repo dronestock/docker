@@ -1,6 +1,8 @@
 package main
 
 import (
+	`path/filepath`
+
 	`github.com/storezhang/gex`
 	`github.com/storezhang/gox`
 	`github.com/storezhang/gox/field`
@@ -42,7 +44,7 @@ func build(conf *config, logger simaqian.Logger) (err error) {
 	logger.Info(`开始编译Dockerfile`, fields...)
 
 	// 执行命令
-	options := gex.NewOptions(gex.Args(args...))
+	options := gex.NewOptions(gex.Args(args...), gex.Dir(filepath.Dir(conf.Dockerfile)))
 	if _, err = gex.Run(conf.exe, options...); nil != err {
 		logger.Error(`编译Dockerfile出错`, fields.Connect(field.Error(err))...)
 	}
