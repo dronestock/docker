@@ -27,13 +27,14 @@ steps:
       output: docker
       verbose: true
 
-  - name: 打包Docker到仓库
-    image: dronestock/docker
+  - name: 打包Docker到腾讯云
+    image: ccr.ccs.tencentyun.com/dronestock/docker
     pull: always
     privileged: true
     settings:
-      verbose: true
+      registry: ccr.ccs.tencentyun.com
       repository: dronestock/docker
-      username: dronestock
+      username:
+        from_secret: username_docker_tencentyun
       password:
-        from_secret: token_docker
+        from_secret: password_docker_tencentyun
