@@ -43,8 +43,10 @@ type config struct {
 	// nolint:lll
 	Link string `default:"${PLUGIN_LINK=${LINK=${PLUGIN_REPO_LINK=${DRONE_REPO_LINK=https://github.com/dronestock/docker}}}}"`
 
-	StoragePath   string
-	StorageDriver string
+	// 数据目录
+	DataRoot string `default:"${PLUGIN_DATA_ROOT=${DATA_ROOT=/var/lib/docker}}"`
+	// 驱动
+	StorageDriver string `default:"${PLUGIN_STORAGE_DRIVER=${STORAGE_DRIVER}}"`
 
 	// 仓库地址
 	Registry string `default:"${PLUGIN_REGISTRY=${REGISTRY=docker.io}}"`

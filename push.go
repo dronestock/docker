@@ -16,7 +16,7 @@ func push(conf *config, logger simaqian.Logger) (err error) {
 	}
 
 	for _, _tag := range conf.tags() {
-		target := fmt.Sprintf(`%s:%s`, conf.Repository, _tag)
+		target := fmt.Sprintf(`%s/%s:%s`, conf.Registry, conf.Repository, _tag)
 		tagArgs := []string{
 			`tag`,
 			conf.Name,

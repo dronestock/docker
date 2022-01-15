@@ -17,6 +17,7 @@ func daemon(conf *config, logger simaqian.Logger) (err error) {
 	}
 
 	args := []string{
+		"--data-root", conf.DataRoot,
 		fmt.Sprintf(`--host=%s`, conf.Host),
 	}
 
@@ -24,6 +25,10 @@ func daemon(conf *config, logger simaqian.Logger) (err error) {
 		args = append(args, "--seccomp-profile=/etc/docker/default.json")
 	}
 
+	// 驱动
+	if `` != conf.StorageDriver {
+		args = append(args, "storage-driver", conf.StorageDriver)
+	}
 	// 镜像加速
 	for _, mirror := range conf.mirrors() {
 		args = append(args, "--registry-mirror", mirror)
