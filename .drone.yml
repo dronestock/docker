@@ -34,7 +34,6 @@ steps:
     settings:
       registry: ccr.ccs.tencentyun.com
       repository: dronestock/docker
-      context: .
       username:
         from_secret: username_docker_tencentyun
       password:
@@ -43,6 +42,7 @@ steps:
   - name: 打包Docker到中央库
     image: ccr.ccs.tencentyun.com/dronestock/docker
     pull: always
+    failure: ignore
     privileged: true
     settings:
       repository: dronestock/docker
