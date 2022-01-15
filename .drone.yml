@@ -34,7 +34,7 @@ steps:
     settings:
       registry: ccr.ccs.tencentyun.com
       repository: dronestock/docker
-      context: ../docker
+      context: /drone/src
       username:
         from_secret: username_docker_tencentyun
       password:
