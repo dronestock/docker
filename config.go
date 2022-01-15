@@ -49,7 +49,7 @@ type config struct {
 	StorageDriver string `default:"${PLUGIN_STORAGE_DRIVER=${STORAGE_DRIVER}}"`
 
 	// 仓库地址
-	Registry string `default:"${PLUGIN_REGISTRY=${REGISTRY=docker.io}}"`
+	Registry string `default:"${PLUGIN_REGISTRY=${REGISTRY=https://index.docker.io/v2}}"`
 	// 用户名
 	Username string `default:"${PLUGIN_USERNAME=${USERNAME}}"`
 	// 密码
