@@ -181,7 +181,7 @@ func (c *config) squash() bool {
 }
 
 func (c *config) context() (context string) {
-	if `` == c.Context || `.` == c.Context {
+	if `.` == c.Context {
 		context = filepath.Dir(c.Dockerfile)
 	} else {
 		context = c.Context
