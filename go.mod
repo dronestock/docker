@@ -1,9 +1,9 @@
-module github.com/dronestock/docker
+module github.com/pangum/drone
 
 go 1.17
 
 require (
-	github.com/storezhang/gex v0.0.3
+	github.com/storezhang/gex v0.0.7
 	github.com/storezhang/gox v1.8.3
 	github.com/storezhang/mengpo v0.1.0
 	github.com/storezhang/simaqian v0.1.0

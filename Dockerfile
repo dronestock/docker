@@ -8,7 +8,7 @@ LABEL wechat="storezhang"
 LABEL description="Drone持续集成Docker插件"
 
 
-# RUN apk add docker
+RUN apk add docker
 # 复制文件
 COPY docker /
 COPY dockerd /bin
@@ -18,8 +18,8 @@ RUN set -ex \
     \
     \
     \
-    && apk update \
-    && apk --no-cache add docker \
+    # && apk update \
+    # && apk --no-cache add docker \
     \
     \
     \
