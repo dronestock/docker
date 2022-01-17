@@ -112,10 +112,10 @@ func (c *config) load() (err error) {
 
 func (c *config) init() {
 	c.defaultMirrors = []string{
+		`https://ustc-edu-cn.mirror.aliyuncs.com`,
 		`https://mirror.baidubce.com`,
 		`https://hub.daocloud.io`,
 		`https://mirror.ccs.tencentyun.com`,
-		`https://docker.mirrors.ustc.edu.cn`,
 	}
 
 	c.exe = `/usr/bin/docker`
