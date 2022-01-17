@@ -1,4 +1,4 @@
-FROM ccr.ccs.tencentyun.com/storezhang/alpine
+FROM storezhang/alpine
 
 
 LABEL author="storezhang<华寅>"
@@ -10,7 +10,6 @@ LABEL description="Drone持续集成Docker插件"
 
 # RUN apk add docker
 # 复制文件
-COPY docker /
 COPY dockerd /bin
 
 
