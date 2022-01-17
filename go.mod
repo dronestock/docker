@@ -3,7 +3,7 @@ module github.com/dronestock/docker
 go 1.17
 
 require (
-	github.com/storezhang/gex v0.0.9
+	github.com/storezhang/gex v0.1.0
 	github.com/storezhang/gox v1.8.3
 	github.com/storezhang/mengpo v0.1.0
 	github.com/storezhang/simaqian v0.1.0
@@ -18,7 +18,7 @@ require (
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
-	github.com/storezhang/guc v0.0.3 // indirect
+	github.com/storezhang/guc v0.0.4 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1 // indirect

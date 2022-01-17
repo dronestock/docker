@@ -20,6 +20,8 @@ steps:
     settings:
       verbose: true
       debug: true
+      ssh_key:
+        from_secret: ssh_key_github
 
   - name: 编译
     image: dronestock/pangu
