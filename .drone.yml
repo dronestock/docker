@@ -33,10 +33,18 @@ steps:
   - name: 打包Docker到中央库
     image: ccr.ccs.tencentyun.com/dronestock/docker
     pull: if-not-exists
-    failure: ignore
+    volumes:
+      - name: cache
+        path: /var/lib/docker
     privileged: true
     settings:
       repository: dronestock/docker
       username: dronestock
       password:
         from_secret: token_docker
+
+
+volumes:
+  - name: cache
+    host:
+      path: /var/lib/docker
