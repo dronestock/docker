@@ -10,15 +10,15 @@ import (
 	`github.com/storezhang/simaqian`
 )
 
-func daemon(conf *config, logger simaqian.Logger) (err error) {
+func (p *plugin) daemon(logger simaqian.Logger) (err error) {
 	// 不必要不启动守护进程
-	if _, statErr := os.Stat(conf.outsideDockerfile); nil == statErr {
+	if _, statErr := os.Stat(p.config.outsideDockerfile); nil == statErr {
 		return
 	}
 
 	args := []string{
-		"--data-root", conf.DataRoot,
-		fmt.Sprintf(`--host=%s`, conf.Host),
+		"--data-root", p.config.DataRoot,
+		fmt.Sprintf(`--host=%s`, p.config.Host),
 	}
 
 	if _, statErr := os.Stat("/etc/docker/default.json"); nil == statErr {
@@ -26,32 +26,32 @@ func daemon(conf *config, logger simaqian.Logger) (err error) {
 	}
 
 	// 驱动
-	if `` != conf.StorageDriver {
-		args = append(args, "storage-driver", conf.StorageDriver)
+	if `` != p.config.StorageDriver {
+		args = append(args, "storage-driver", p.config.StorageDriver)
 	}
 	// 镜像加速
-	for _, mirror := range conf.mirrors() {
+	for _, mirror := range p.config.mirrors() {
 		args = append(args, "--registry-mirror", mirror)
 	}
 
 	// 启用实验性功能
-	if conf.Experimental {
+	if p.config.Experimental {
 		args = append(args, "--experimental")
 	}
 
 	// 记录启动日志，方便调试
 	fields := gox.Fields{
-		field.String(`host`, conf.Host),
-		field.Strings(`mirrors`, conf.mirrors()...),
+		field.String(`host`, p.config.Host),
+		field.Strings(`mirrors`, p.config.mirrors()...),
 	}
 	logger.Info(`开始启动Docker守护进程`, fields...)
 
 	// 执行命令
-	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(conf.daemonSuccessMark), gex.Async())
-	if !conf.Verbose {
+	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(p.config.daemonSuccessMark), gex.Async())
+	if !p.config.Verbose {
 		options = append(options, gex.Quiet())
 	}
-	if _, err = gex.Run(conf.daemon, options...); nil != err {
+	if _, err = gex.Run(p.config.daemon, options...); nil != err {
 		logger.Error(`启动Docker守护进程出错`, fields.Connect(field.Error(err))...)
 	}
 	if nil != err {

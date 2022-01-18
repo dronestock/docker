@@ -6,6 +6,7 @@ import (
 	`strings`
 	`time`
 
+	`github.com/dronestock/drone`
 	`github.com/storezhang/gox`
 	`github.com/storezhang/gox/field`
 	`github.com/storezhang/mengpo`
@@ -13,6 +14,8 @@ import (
 )
 
 type config struct {
+	drone.Config
+
 	// 配置文件
 	Dockerfile string `default:"${PLUGIN_DOCKERFILE=${DOCKERFILE=Dockerfile}}" validate:"required"`
 	// 上下文
@@ -56,11 +59,6 @@ type config struct {
 	Password string `default:"${PLUGIN_PASSWORD=${PASSWORD}}"`
 	// 仓库
 	Repository string `default:"${PLUGIN_REPOSITORY=${REPOSITORY}}"`
-
-	// 是否启用默认值
-	Defaults bool `default:"${PLUGIN_DEFAULTS=${DEFAULTS=true}}"`
-	// 是否显示调试信息
-	Verbose bool `default:"${PLUGIN_VERBOSE=${VERBOSE=false}}"`
 
 	defaultMirrors    []string
 	exe               string

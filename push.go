@@ -10,32 +10,32 @@ import (
 	`github.com/storezhang/simaqian`
 )
 
-func push(conf *config, logger simaqian.Logger) (err error) {
-	if `` == strings.TrimSpace(conf.Repository) {
+func (p *plugin) push(logger simaqian.Logger) (err error) {
+	if `` == strings.TrimSpace(p.config.Repository) {
 		return
 	}
 
-	for _, _tag := range conf.tags() {
-		target := fmt.Sprintf(`%s/%s:%s`, conf.Registry, conf.Repository, _tag)
+	for _, _tag := range p.config.tags() {
+		target := fmt.Sprintf(`%s/%s:%s`, p.config.Registry, p.config.Repository, _tag)
 		tagArgs := []string{
 			`tag`,
-			conf.Name,
+			p.config.Name,
 			target,
 		}
 
 		// 记录启动日志，方便调试
 		fields := gox.Fields{
-			field.String(`name`, conf.Name),
-			field.String(`registry`, conf.Registry),
-			field.String(`repository`, conf.Repository),
+			field.String(`name`, p.config.Name),
+			field.String(`registry`, p.config.Registry),
+			field.String(`repository`, p.config.Repository),
 			field.String(`tag`, _tag),
 		}
 
 		tagOptions := gex.NewOptions(gex.Args(tagArgs...))
-		if !conf.Verbose {
+		if !p.config.Verbose {
 			tagOptions = append(tagOptions, gex.Quiet())
 		}
-		if _, err = gex.Run(conf.exe, tagOptions...); nil != err {
+		if _, err = gex.Run(p.config.exe, tagOptions...); nil != err {
 			logger.Error(`镜像打标签出错`, fields.Connect(field.Error(err))...)
 		}
 		if nil != err {
@@ -49,7 +49,7 @@ func push(conf *config, logger simaqian.Logger) (err error) {
 		}
 
 		logger.Info(`开始推送镜像到仓库`, fields...)
-		if _, err = gex.Run(conf.exe, gex.Args(pushArgs...)); nil != err {
+		if _, err = gex.Run(p.config.exe, gex.Args(pushArgs...)); nil != err {
 			logger.Error(`推送Docker镜像到仓库出错`, fields.Connect(field.Error(err))...)
 		}
 		if nil != err {

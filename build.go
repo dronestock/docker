@@ -9,43 +9,43 @@ import (
 	`github.com/storezhang/simaqian`
 )
 
-func build(conf *config, logger simaqian.Logger) (err error) {
+func (p *plugin) build(logger simaqian.Logger) (err error) {
 	args := []string{
 		`build`,
 		`--rm=true`,
-		`--file`, conf.Dockerfile,
-		`--tag`, conf.Name,
+		`--file`, p.config.Dockerfile,
+		`--tag`, p.config.Name,
 	}
 
 	// 编译上下文
-	args = append(args, conf.context())
+	args = append(args, p.config.context())
 
 	// 精减导数
-	if conf.squash() {
+	if p.config.squash() {
 		args = append(args, `--squash`)
 	}
 	// 压缩
-	if conf.Compress {
+	if p.config.Compress {
 		args = append(args, `--compress`)
 	}
 	// 添加标签
-	for _, label := range conf.labels() {
+	for _, label := range p.config.labels() {
 		args = append(args, `--label`, label)
 	}
 
 	// 记录启动日志，方便调试
 	fields := gox.Fields{
-		field.String(`dockerfile`, conf.Dockerfile),
-		field.String(`context`, conf.context()),
-		field.String(`name`, conf.Name),
-		field.Bool(`squash`, conf.squash()),
-		field.Bool(`compress`, conf.Compress),
+		field.String(`dockerfile`, p.config.Dockerfile),
+		field.String(`context`, p.config.context()),
+		field.String(`name`, p.config.Name),
+		field.Bool(`squash`, p.config.squash()),
+		field.Bool(`compress`, p.config.Compress),
 	}
 	logger.Info(`开始编译Dockerfile`, fields...)
 
 	// 执行命令
-	options := gex.NewOptions(gex.Args(args...), gex.Dir(filepath.Dir(conf.Dockerfile)))
-	if _, err = gex.Run(conf.exe, options...); nil != err {
+	options := gex.NewOptions(gex.Args(args...), gex.Dir(filepath.Dir(p.config.Dockerfile)))
+	if _, err = gex.Run(p.config.exe, options...); nil != err {
 		logger.Error(`编译Dockerfile出错`, fields.Connect(field.Error(err))...)
 	}
 	if nil != err {
