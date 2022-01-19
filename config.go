@@ -9,8 +9,6 @@ import (
 	`github.com/dronestock/drone`
 	`github.com/storezhang/gox`
 	`github.com/storezhang/gox/field`
-	`github.com/storezhang/mengpo`
-	`github.com/storezhang/validatorx`
 )
 
 type config struct {
@@ -60,13 +58,7 @@ type config struct {
 	// 仓库
 	Repository string `default:"${PLUGIN_REPOSITORY=${REPOSITORY}}"`
 
-	defaultMirrors    []string
-	exe               string
-	daemon            string
-	outsideDockerfile string
-
-	daemonSuccessMark string
-	loginSuccessMark  string
+	defaultMirrors []string
 }
 
 func (c *config) Fields() gox.Fields {
@@ -90,38 +82,7 @@ func (c *config) Fields() gox.Fields {
 		field.String(`registry`, c.Registry),
 		field.String(`username`, c.Username),
 		field.String(`repository`, c.Repository),
-
-		field.Bool(`defaults`, c.Defaults),
-		field.Bool(`verbose`, c.Verbose),
 	}
-}
-
-func (c *config) load() (err error) {
-	if err = mengpo.Set(c); nil != err {
-		return
-	}
-	if err = validatorx.Struct(c); nil != err {
-		return
-	}
-	c.init()
-
-	return
-}
-
-func (c *config) init() {
-	c.defaultMirrors = []string{
-		`https://ustc-edu-cn.mirror.aliyuncs.com`,
-		`https://mirror.baidubce.com`,
-		`https://hub.daocloud.io`,
-		`https://mirror.ccs.tencentyun.com`,
-	}
-
-	c.exe = `/usr/bin/docker`
-	c.daemon = `/usr/bin/dockerd`
-	c.outsideDockerfile = `/var/run/docker.sock`
-
-	c.daemonSuccessMark = `API listen on /var/run/docker.sock`
-	c.loginSuccessMark = `Login Succeeded`
 }
 
 func (c *config) mirrors() (mirrors []string) {

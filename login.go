@@ -9,8 +9,9 @@ import (
 	`github.com/storezhang/simaqian`
 )
 
-func (p *plugin) login(logger simaqian.Logger) (err error) {
-	if `` == strings.TrimSpace(p.config.Username) || `` == strings.TrimSpace(p.config.Password) {
+func (p *plugin) login(logger simaqian.Logger) (undo bool, err error) {
+	undo = `` == strings.TrimSpace(p.config.Username) || `` == strings.TrimSpace(p.config.Password)
+	if undo {
 		return
 	}
 
@@ -29,11 +30,11 @@ func (p *plugin) login(logger simaqian.Logger) (err error) {
 	logger.Info(`开始登录Docker仓库`, fields...)
 
 	// 执行命令
-	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(p.config.loginSuccessMark), gex.Async())
+	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(p.loginSuccessMark), gex.Async())
 	if !p.config.Verbose {
 		options = append(options, gex.Quiet())
 	}
-	if _, err = gex.Run(p.config.exe, options...); nil != err {
+	if _, err = gex.Run(p.exe, options...); nil != err {
 		logger.Error(`登录Docker仓库出错`, fields.Connect(field.Error(err))...)
 	}
 	if nil != err {

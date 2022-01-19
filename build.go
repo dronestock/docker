@@ -9,7 +9,7 @@ import (
 	`github.com/storezhang/simaqian`
 )
 
-func (p *plugin) build(logger simaqian.Logger) (err error) {
+func (p *plugin) build(logger simaqian.Logger) (undo bool, err error) {
 	args := []string{
 		`build`,
 		`--rm=true`,
@@ -45,7 +45,7 @@ func (p *plugin) build(logger simaqian.Logger) (err error) {
 
 	// 执行命令
 	options := gex.NewOptions(gex.Args(args...), gex.Dir(filepath.Dir(p.config.Dockerfile)))
-	if _, err = gex.Run(p.config.exe, options...); nil != err {
+	if _, err = gex.Run(p.exe, options...); nil != err {
 		logger.Error(`编译Dockerfile出错`, fields.Connect(field.Error(err))...)
 	}
 	if nil != err {

@@ -15,7 +15,7 @@ trigger:
 
 steps:
   - name: 拉代码
-    image: ccr.ccs.tencentyun.com/dronestock/git
+    image: dronestock/git
     pull: always
     settings:
       verbose: true
@@ -24,27 +24,18 @@ steps:
         from_secret: ssh_key_github
 
   - name: 编译
-    image: dronestock/pangu
-    pull: if-not-exists
+    image: pangum/drone
+    pull: always
     settings:
       output: dockerd
       verbose: true
 
   - name: 打包Docker到中央库
-    image: ccr.ccs.tencentyun.com/dronestock/docker
-    pull: if-not-exists
-    volumes:
-      - name: cache
-        path: /var/lib/docker
+    image: dronestock/docker
+    pull: always
     privileged: true
     settings:
       repository: dronestock/docker
       username: dronestock
       password:
         from_secret: token_docker
-
-
-volumes:
-  - name: cache
-    host:
-      path: /var/lib/docker

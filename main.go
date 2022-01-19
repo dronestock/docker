@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	panic(drone.Bootstrap(newPlugin()))
+	panic(drone.Bootstrap(newPlugin))
 }
