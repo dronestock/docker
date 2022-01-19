@@ -31,7 +31,7 @@ func (p *plugin) login(logger simaqian.Logger) (undo bool, err error) {
 
 	// 执行命令
 	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(p.loginSuccessMark), gex.Async())
-	if !p.config.Verbose {
+	if !p.config.Debug {
 		options = append(options, gex.Quiet())
 	}
 	if _, err = gex.Run(p.exe, options...); nil != err {

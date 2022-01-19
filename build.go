@@ -45,6 +45,9 @@ func (p *plugin) build(logger simaqian.Logger) (undo bool, err error) {
 
 	// 执行命令
 	options := gex.NewOptions(gex.Args(args...), gex.Dir(filepath.Dir(p.config.Dockerfile)))
+	if !p.config.Debug {
+		options = append(options, gex.Quiet())
+	}
 	if _, err = gex.Run(p.exe, options...); nil != err {
 		logger.Error(`编译Dockerfile出错`, fields.Connect(field.Error(err))...)
 	}
