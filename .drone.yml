@@ -15,7 +15,7 @@ trigger:
 
 steps:
   - name: 拉代码
-    image: dronestock/git
+    image: hub.daocloud.io/dronestock/git
     pull: always
     settings:
       verbose: true
