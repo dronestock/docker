@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: Drone持续集成Docker插件
+name: Docker插件
 
 
 clone:
