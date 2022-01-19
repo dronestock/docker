@@ -4,33 +4,28 @@ import (
 	`github.com/dronestock/drone`
 )
 
+const (
+	exe               = `/usr/bin/docker`
+	daemonExe         = `/usr/bin/dockerd`
+	outsideDockerfile = `/var/run/docker.sock`
+	daemonSuccessMark = `API listen on /var/run/docker.sock`
+	loginSuccessMark  = `Login Succeeded`
+)
+
+var defaultMirrors = []string{
+	`https://ustc-edu-cn.mirror.aliyuncs.com`,
+	`https://mirror.baidubce.com`,
+	`https://hub.daocloud.io`,
+	`https://mirror.ccs.tencentyun.com`,
+}
+
 type plugin struct {
 	config *config
-
-	exe               string
-	daemonExe         string
-	outsideDockerfile string
-
-	daemonSuccessMark string
-	loginSuccessMark  string
 }
 
 func newPlugin() drone.Plugin {
 	return &plugin{
-		config: &config{
-			defaultMirrors: []string{
-				`https://ustc-edu-cn.mirror.aliyuncs.com`,
-				`https://mirror.baidubce.com`,
-				`https://hub.daocloud.io`,
-				`https://mirror.ccs.tencentyun.com`,
-			},
-		},
-		exe:               `/usr/bin/docker`,
-		daemonExe:         `/usr/bin/dockerd`,
-		outsideDockerfile: `/var/run/docker.sock`,
-
-		daemonSuccessMark: `API listen on /var/run/docker.sock`,
-		loginSuccessMark:  `Login Succeeded`,
+		config: new(config),
 	}
 }
 

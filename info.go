@@ -10,7 +10,7 @@ func (p *plugin) info(logger simaqian.Logger) (undo bool, err error) {
 	if !p.config.Debug {
 		options = append(options, gex.Quiet())
 	}
-	if _, err = gex.Run(p.exe, options...); nil != err {
+	if _, err = gex.Run(exe, options...); nil != err {
 		logger.Error(`获得Docker信息出错`)
 	}
 

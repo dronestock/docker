@@ -12,7 +12,7 @@ import (
 
 func (p *plugin) daemon(logger simaqian.Logger) (undo bool, err error) {
 	// 不必要不启动守护进程
-	if _, statErr := os.Stat(p.outsideDockerfile); nil == statErr {
+	if _, statErr := os.Stat(outsideDockerfile); nil == statErr {
 		undo = true
 	}
 	if undo {
@@ -50,11 +50,11 @@ func (p *plugin) daemon(logger simaqian.Logger) (undo bool, err error) {
 	logger.Info(`开始启动Docker守护进程`, fields...)
 
 	// 执行命令
-	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(p.daemonSuccessMark), gex.Async())
+	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(daemonSuccessMark), gex.Async())
 	if !p.config.Debug {
 		options = append(options, gex.Quiet())
 	}
-	if _, err = gex.Run(p.daemonExe, options...); nil != err {
+	if _, err = gex.Run(daemonExe, options...); nil != err {
 		logger.Error(`启动Docker守护进程出错`, fields.Connect(field.Error(err))...)
 	}
 	if nil != err {

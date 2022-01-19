@@ -36,7 +36,7 @@ func (p *plugin) push(logger simaqian.Logger) (undo bool, err error) {
 		if !p.config.Debug {
 			tagOptions = append(tagOptions, gex.Quiet())
 		}
-		if _, err = gex.Run(p.exe, tagOptions...); nil != err {
+		if _, err = gex.Run(exe, tagOptions...); nil != err {
 			logger.Error(`镜像打标签出错`, fields.Connect(field.Error(err))...)
 		}
 		if nil != err {
@@ -56,7 +56,7 @@ func (p *plugin) push(logger simaqian.Logger) (undo bool, err error) {
 		if !p.config.Debug {
 			pushOptions = append(pushOptions, gex.Quiet())
 		}
-		if _, err = gex.Run(p.exe, pushOptions...); nil != err {
+		if _, err = gex.Run(exe, pushOptions...); nil != err {
 			logger.Error(`推送Docker镜像到仓库出错`, fields.Connect(field.Error(err))...)
 		}
 		if nil != err {

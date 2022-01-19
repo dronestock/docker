@@ -30,11 +30,11 @@ func (p *plugin) login(logger simaqian.Logger) (undo bool, err error) {
 	logger.Info(`开始登录Docker仓库`, fields...)
 
 	// 执行命令
-	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(p.loginSuccessMark), gex.Async())
+	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(loginSuccessMark), gex.Async())
 	if !p.config.Debug {
 		options = append(options, gex.Quiet())
 	}
-	if _, err = gex.Run(p.exe, options...); nil != err {
+	if _, err = gex.Run(exe, options...); nil != err {
 		logger.Error(`登录Docker仓库出错`, fields.Connect(field.Error(err))...)
 	}
 	if nil != err {
