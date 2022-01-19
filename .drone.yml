@@ -44,4 +44,4 @@ steps:
 volumes:
   - name: cache
     host:
-      path: /var/lib/cache/dockerd
+      path: /var/lib/cache/docker
