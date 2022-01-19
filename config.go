@@ -57,8 +57,6 @@ type config struct {
 	Password string `default:"${PLUGIN_PASSWORD=${PASSWORD}}"`
 	// 仓库
 	Repository string `default:"${PLUGIN_REPOSITORY=${REPOSITORY}}"`
-
-	defaultMirrors []string
 }
 
 func (c *config) Fields() gox.Fields {
@@ -86,9 +84,9 @@ func (c *config) Fields() gox.Fields {
 }
 
 func (c *config) mirrors() (mirrors []string) {
-	mirrors = make([]string, 0, len(c.defaultMirrors))
+	mirrors = make([]string, 0, len(defaultMirrors))
 	if c.Defaults {
-		mirrors = append(mirrors, c.defaultMirrors...)
+		mirrors = append(mirrors, defaultMirrors...)
 	}
 	mirrors = append(mirrors, c.Mirrors...)
 
