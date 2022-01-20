@@ -18,6 +18,7 @@ name: 打包Docker到中央仓库
   image: dronestock/docker
   pull: if-not-exists
   settings:
+    # registry: ccr.ccs.tencentyun.com
     repository: dronestock/docker
     username: dronestock
     password:
