@@ -60,7 +60,7 @@ type config struct {
 }
 
 func (c *config) Fields() gox.Fields {
-	return []gox.Field{
+	return gox.Fields{
 		field.String(`dockerfile`, c.Dockerfile),
 		field.String(`context`, c.Context),
 		field.String(`host`, c.Host),
