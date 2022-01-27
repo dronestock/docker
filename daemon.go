@@ -4,13 +4,10 @@ import (
 	`fmt`
 	`os`
 
-	`github.com/storezhang/gex`
-	`github.com/storezhang/gox`
-	`github.com/storezhang/gox/field`
-	`github.com/storezhang/simaqian`
+	`github.com/dronestock/drone`
 )
 
-func (p *plugin) daemon(logger simaqian.Logger) (undo bool, err error) {
+func (p *plugin) daemon() (undo bool, err error) {
 	// 不必要不启动守护进程
 	if _, statErr := os.Stat(outsideDockerfile); nil == statErr {
 		undo = true
@@ -20,8 +17,8 @@ func (p *plugin) daemon(logger simaqian.Logger) (undo bool, err error) {
 	}
 
 	args := []string{
-		"--data-root", p.config.DataRoot,
-		fmt.Sprintf(`--host=%s`, p.config.Host),
+		"--data-root", p.DataRoot,
+		fmt.Sprintf(`--host=%s`, p.Host),
 	}
 
 	if _, statErr := os.Stat("/etc/docker/default.json"); nil == statErr {
@@ -29,40 +26,21 @@ func (p *plugin) daemon(logger simaqian.Logger) (undo bool, err error) {
 	}
 
 	// 驱动
-	if `` != p.config.StorageDriver {
-		args = append(args, "storage-driver", p.config.StorageDriver)
+	if `` != p.StorageDriver {
+		args = append(args, "storage-driver", p.StorageDriver)
 	}
 	// 镜像加速
-	for _, mirror := range p.config.mirrors() {
+	for _, mirror := range p.mirrors() {
 		args = append(args, "--registry-mirror", mirror)
 	}
 
 	// 启用实验性功能
-	if p.config.Experimental {
+	if p.Experimental {
 		args = append(args, "--experimental")
 	}
 
-	// 记录启动日志，方便调试
-	fields := gox.Fields{
-		field.String(`host`, p.config.Host),
-		field.Strings(`mirrors`, p.config.mirrors()...),
-	}
-	logger.Info(`开始启动Docker守护进程`, fields...)
-
-	// 执行命令
-	options := gex.NewOptions(gex.Args(args...), gex.ContainsChecker(daemonSuccessMark), gex.Async())
-	if !p.config.Debug {
-		options = append(options, gex.Quiet())
-	}
-	if _, err = gex.Run(daemonExe, options...); nil != err {
-		logger.Error(`启动Docker守护进程出错`, fields.Connect(field.Error(err))...)
-	}
-	if nil != err {
-		return
-	}
-
-	// 记录启动功能日志，方便调试
-	logger.Info(`启动Docker守护进程成功`, fields...)
+	// 执行代码检查命令
+	err = p.Exec(daemonExe, drone.Args(args...), drone.Contains(daemonSuccessMark), drone.Async(), drone.Dir(p.Context))
 
 	return
 }
