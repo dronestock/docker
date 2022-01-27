@@ -22,7 +22,7 @@ RUN set -ex \
     \
     \
     # 增加执行权限
-    && chmod +x /bin/dockerd \
+    && chmod +x /bin/docker \
     \
     \
     \
@@ -30,4 +30,4 @@ RUN set -ex \
 
 
 # 执行命令
-ENTRYPOINT /bin/dockerd
+ENTRYPOINT /bin/docker
