@@ -17,7 +17,7 @@ func (p *plugin) push() (undo bool, err error) {
 		if err = p.Exec(exe, drone.Args(`tag`, p.Name, target), drone.Dir(p.Context)); nil != err {
 			return
 		}
-		if err = p.Exec(exe, drone.Args(`push`, target)); nil != err {
+		if err = p.Exec(exe, drone.Args(`push`, target), drone.Dir(p.Context)); nil != err {
 			return
 		}
 	}
