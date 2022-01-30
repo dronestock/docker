@@ -12,12 +12,13 @@ func (p *plugin) push() (undo bool, err error) {
 		return
 	}
 
-	for _, _tag := range p.tags() {
-		target := fmt.Sprintf(`%s/%s:%s`, p.Registry, p.Repository, _tag)
-		if err = p.Exec(exe, drone.Args(`tag`, p.Name, target), drone.Dir(p.Context)); nil != err {
-			return
+	for _, tag := range p.tags() {
+		target := fmt.Sprintf(`%s/%s:%s`, p.Registry, p.Repository, tag)
+		if err = p.Exec(exe, drone.Args(`tag`, p.tag(), target)); nil != err {
+			// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
+			target = p.tag()
 		}
-		if err = p.Exec(exe, drone.Args(`push`, target), drone.Dir(p.Context)); nil != err {
+		if err = p.Exec(exe, drone.Args(`push`, target)); nil != err {
 			return
 		}
 	}

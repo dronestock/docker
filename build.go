@@ -1,6 +1,8 @@
 package main
 
 import (
+	`path/filepath`
+
 	`github.com/dronestock/drone`
 )
 
@@ -9,7 +11,7 @@ func (p *plugin) build() (undo bool, err error) {
 		`build`,
 		`--rm=true`,
 		`--file`, p.Dockerfile,
-		`--tag`, p.Name,
+		`--tag`, p.tag(),
 	}
 
 	// 编译上下文
@@ -29,7 +31,7 @@ func (p *plugin) build() (undo bool, err error) {
 	}
 
 	// 执行代码检查命令
-	err = p.Exec(exe, drone.Args(args...), drone.Dir(p.Context))
+	err = p.Exec(exe, drone.Args(args...), drone.Dir(filepath.Dir(p.Dockerfile)))
 
 	return
 }

@@ -158,6 +158,10 @@ func (p *plugin) tags() (tags map[string]string) {
 	return
 }
 
+func (p *plugin) tag() string {
+	return fmt.Sprintf(`%s:%s`, p.Repository, p.Name)
+}
+
 func (p *plugin) squash() bool {
 	return p.Experimental && p.Squash
 }

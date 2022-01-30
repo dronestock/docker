@@ -20,7 +20,7 @@ func (p *plugin) login() (undo bool, err error) {
 	}
 
 	// 执行代码检查命令
-	err = p.Exec(daemonExe, drone.Args(args...), drone.Contains(loginSuccessMark), drone.Async(), drone.Dir(p.Context))
+	err = p.Exec(exe, drone.Args(args...), drone.Contains(loginSuccessMark), drone.Async(), drone.Dir(p.Context))
 
 	return
 }
