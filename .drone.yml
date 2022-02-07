@@ -28,6 +28,9 @@ steps:
     image: dronestock/docker
     pull: always
     privileged: true
+    when:
+      event:
+        - tag
     volumes:
       - name: cache
         path: /var/lib/docker
