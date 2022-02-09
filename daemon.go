@@ -16,7 +16,7 @@ func (p *plugin) daemon() (undo bool, err error) {
 		return
 	}
 
-	args := []string{
+	args := []interface{}{
 		"--data-root", p.DataRoot,
 		fmt.Sprintf(`--host=%s`, p.Host),
 	}

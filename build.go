@@ -7,7 +7,7 @@ import (
 )
 
 func (p *plugin) build() (undo bool, err error) {
-	args := []string{
+	args := []interface{}{
 		`build`,
 		`--rm=true`,
 		`--file`, p.Dockerfile,

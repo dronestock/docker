@@ -12,7 +12,7 @@ func (p *plugin) login() (undo bool, err error) {
 	}
 
 	// 组装参数
-	args := []string{
+	args := []interface{}{
 		`login`,
 		`--username`, p.Username,
 		`--password`, p.Password,
