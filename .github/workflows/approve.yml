@@ -1,0 +1,14 @@
+name: 同意
+
+on: pull_request_target
+
+jobs:
+  autoapprove:
+    name: 自动同意
+    runs-on: ubuntu-latest
+    steps:
+      - name: 代码机器人
+        uses: cognitedata/auto-approve-dependabot-action@v3.0.1
+        if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
