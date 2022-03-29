@@ -1,14 +1,14 @@
 package main
 
 import (
-	`fmt`
-	`path/filepath`
-	`strings`
-	`time`
+	"fmt"
+	"path/filepath"
+	"strings"
+	"time"
 
-	`github.com/dronestock/drone`
-	`github.com/storezhang/gox`
-	`github.com/storezhang/gox/field`
+	"github.com/dronestock/drone"
+	"github.com/goexl/gox"
+	"github.com/goexl/gox/field"
 )
 
 var defaultMirrors = []string{
