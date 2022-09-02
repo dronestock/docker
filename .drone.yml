@@ -29,12 +29,10 @@ steps:
       repository: dronestock/docker
       registries:
         - username: dronestock
-          password:
-            from_secret: token_docker
+          password: token_docker
         - hostname: ccr.ccs.tencentyun.com
           username: 160290688
-          password:
-            from_secret: password_tencentyun_ccr
+          password: password_tencentyun_ccr
           required: true
 
 
