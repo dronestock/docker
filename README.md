@@ -17,16 +17,19 @@ Drone持续集成Docker插件
 name: 打包Docker到中央仓库
   image: dronestock/docker
   pull: if-not-exists
+  environment:
+    PASSWORD_DOCKER:
+      from_secret: token_docker
+    PASSWORD_CCR:
+      from_secret: password_tencentyun_ccr
   settings:
     repository: dronestock/docker
     registries:
       - username: dronestock
-        password:
-          from_secret: token_docker
+        password: $${PASSWORD_DOCKER}
       - hostname: ccr.ccs.tencentyun.com
-        username: 160290688
-        password:
-          from_secret: password_tencentyun_ccr
+        username: "160290688"
+        password: $${PASSWORD_CCR}
         required: true
 ```
 
