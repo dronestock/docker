@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/dronestock/drone"
 	"github.com/goexl/gox"
@@ -14,30 +15,40 @@ func (p *plugin) push() (undo bool, err error) {
 		return
 	}
 
+	wg := new(sync.WaitGroup)
+	wg.Add(len(p.Registries))
 	for _, tag := range p.tags() {
 		for _, _registry := range p.Registries {
-			target := fmt.Sprintf(`%s/%s:%s`, _registry.Hostname, p.Repository, tag)
-			if err = p.Exec(exe, drone.Args(`tag`, p.tag(), target)); nil != err {
-				// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
-				target = p.tag()
-			}
-
-			fields := gox.Fields{
-				field.String(`registry`, _registry.Hostname),
-				field.Strings(`tag`, tag),
-			}
-			pushErr := p.Exec(exe, drone.Args(`push`, target))
-			if nil != pushErr && _registry.Required {
-				err = pushErr
-				p.Info(`推送镜像失败`, fields.Connect(field.Error(err))...)
-			} else if 1 < len(p.Registries) {
-				p.Info(`推送镜像成功`, fields...)
-			}
-			if nil != err {
-				return
-			}
+			go p.pushToRegistry(_registry, tag, wg, &err)
 		}
 	}
 
+	// 等待所有任务执行完成
+	wg.Wait()
+
 	return
+}
+
+func (p *plugin) pushToRegistry(registry registry, tag string, wg *sync.WaitGroup, err *error) {
+	target := fmt.Sprintf(`%s/%s:%s`, registry.Hostname, p.Repository, tag)
+	fields := gox.Fields{
+		field.String(`registry`, registry.Hostname),
+		field.Strings(`tag`, tag),
+	}
+
+	if tagErr := p.Exec(exe, drone.Args(`tag`, p.tag(), target)); nil != tagErr {
+		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
+		target = p.tag()
+	}
+
+	pushErr := p.Exec(exe, drone.Args(`push`, target))
+	if nil != pushErr && registry.Required {
+		*err = pushErr
+		p.Info(`推送镜像失败`, fields.Connect(field.Error(*err))...)
+	} else if 1 < len(p.Registries) {
+		p.Info(`推送镜像成功`, fields...)
+	}
+
+	// 减少等待个数
+	wg.Done()
 }

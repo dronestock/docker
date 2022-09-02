@@ -18,11 +18,16 @@ name: 打包Docker到中央仓库
   image: dronestock/docker
   pull: if-not-exists
   settings:
-    # registry: ccr.ccs.tencentyun.com
     repository: dronestock/docker
-    username: dronestock
-    password:
-      from_secret: token_docker
+    registries:
+      - username: dronestock
+        password:
+          from_secret: token_docker
+      - hostname: ccr.ccs.tencentyun.com
+        username: 160290688
+        password:
+          from_secret: password_tencentyun_ccr
+        required: true
 ```
 
 ## 感谢Jetbrains

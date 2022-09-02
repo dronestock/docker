@@ -27,9 +27,15 @@ steps:
         path: /var/lib/docker
     settings:
       repository: dronestock/docker
-      username: dronestock
-      password:
-        from_secret: token_docker
+      registries:
+        - username: dronestock
+          password:
+            from_secret: token_docker
+        - hostname: ccr.ccs.tencentyun.com
+          username: 160290688
+          password:
+            from_secret: password_tencentyun_ccr
+          required: true
 
 
 volumes:
