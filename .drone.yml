@@ -9,7 +9,7 @@ clone:
 
 steps:
   - name: 拉代码
-    image: dronestock/git
+    image: ccr.ccs.tencentyun.com/dronestock/git
 
   - name: 编译
     image: pangum/drone
