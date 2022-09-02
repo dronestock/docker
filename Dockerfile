@@ -1,11 +1,11 @@
-FROM storezhang/alpine
+FROM storezhang/alpine:3.16.2
 
 
 LABEL author="storezhang<华寅>"
 LABEL email="storezhang@gmail.com"
 LABEL qq="160290688"
 LABEL wechat="storezhang"
-LABEL description="Drone持续集成Docker插件"
+LABEL description="Drone持续集成Docker插件，增加以下功能：1、多镜像仓库支持；2、镜像推送；3、镜像编译"
 
 
 # 复制文件

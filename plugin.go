@@ -19,7 +19,7 @@ var defaultMirrors = []string{
 }
 
 type plugin struct {
-	drone.PluginBase
+	drone.Base
 
 	// 配置文件
 	Dockerfile string `default:"${PLUGIN_DOCKERFILE=${DOCKERFILE=Dockerfile}}" validate:"required"`
@@ -56,12 +56,8 @@ type plugin struct {
 	// 驱动
 	StorageDriver string `default:"${PLUGIN_STORAGE_DRIVER=${STORAGE_DRIVER}}"`
 
-	// 仓库地址
-	Registry string `default:"${PLUGIN_REGISTRY=${REGISTRY=docker.io}}"`
-	// 用户名
-	Username string `default:"${PLUGIN_USERNAME=${USERNAME}}"`
-	// 密码
-	Password string `default:"${PLUGIN_PASSWORD=${PASSWORD}}"`
+	// 仓库列表
+	Registries []registry `default:"${PLUGIN_REGISTRIES=${REGISTRIES}}"`
 	// 仓库
 	Repository string `default:"${PLUGIN_REPOSITORY=${REPOSITORY}}"`
 }
@@ -102,8 +98,6 @@ func (p *plugin) Fields() gox.Fields {
 		field.String(`remote`, p.Remote),
 		field.String(`link`, p.Link),
 
-		field.String(`registry`, p.Registry),
-		field.String(`username`, p.Username),
 		field.String(`repository`, p.Repository),
 	}
 }
