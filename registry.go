@@ -9,4 +9,6 @@ type registry struct {
 	Password string `json:"password"`
 	// 是否必须成功
 	Required bool `json:"required"`
+	// 登录成功标志
+	Mark string `default:"Login Succeeded" json:"mark"`
 }
