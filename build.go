@@ -1,9 +1,10 @@
 package main
 
 import (
-	`path/filepath`
+	"path/filepath"
+	"strings"
 
-	`github.com/dronestock/drone`
+	"github.com/dronestock/drone"
 )
 
 func (p *plugin) build() (undo bool, err error) {
@@ -25,10 +26,10 @@ func (p *plugin) build() (undo bool, err error) {
 	if p.Compress {
 		args = append(args, `--compress`)
 	}
+
 	// 添加标签
-	for _, label := range p.labels() {
-		args = append(args, `--label`, label)
-	}
+	// 通过只添加一个复合标签来减少层
+	args = append(args, `--label`, strings.Join(p.labels(), ` `))
 
 	// 执行代码检查命令
 	err = p.Exec(exe, drone.Args(args...), drone.Dir(filepath.Dir(p.Dockerfile)))

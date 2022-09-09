@@ -113,7 +113,7 @@ func (p *plugin) mirrors() (mirrors []string) {
 }
 
 func (p *plugin) labels() (labels []string) {
-	labels = make([]string, 0, 4)
+	labels = make([]string, 0, 4+len(p.Labels))
 	if p.Defaults {
 		labels = append(labels, fmt.Sprintf("created=%s", time.Now().Format(time.RFC3339)))
 		labels = append(labels, fmt.Sprintf("revision=%s", p.Name))

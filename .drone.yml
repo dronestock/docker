@@ -20,7 +20,7 @@ steps:
       output: docker
 
   - name: 发布
-    image: dronestock/docker
+    image: dronestock/docker:0.0.1
     privileged: true
     volumes:
       - name: docker
