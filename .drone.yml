@@ -20,7 +20,7 @@ steps:
       output: docker
 
   - name: 发布
-    image: storezhang/docker:0.0.3
+    image: ccr.ccs.tencentyun.com/dronestock/docker
     privileged: true
     volumes:
       - name: docker
