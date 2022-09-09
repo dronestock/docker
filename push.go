@@ -42,8 +42,10 @@ func (p *plugin) pushToRegistry(registry registry, tag string, wg *sync.WaitGrou
 	}
 
 	pushErr := p.Exec(exe, drone.Args(`push`, target))
-	if nil != pushErr && registry.Required {
-		*err = pushErr
+	if nil != pushErr {
+		if registry.Required {
+			*err = pushErr
+		}
 		p.Info(`推送镜像失败`, fields.Connect(field.Error(*err))...)
 	} else {
 		p.Info(`推送镜像成功`, fields...)
