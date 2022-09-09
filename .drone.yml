@@ -20,7 +20,7 @@ steps:
       output: docker
 
   - name: 发布
-    image: storezhang/docker:0.0.1
+    image: storezhang/docker:0.0.2
     privileged: true
     volumes:
       - name: docker
