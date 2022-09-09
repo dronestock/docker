@@ -45,8 +45,10 @@ func (p *plugin) loginRegistry(registry registry, wg *sync.WaitGroup, err *error
 		field.String(`registry`, registry.Hostname),
 		field.Strings(`username`, registry.Username),
 	}
-	if nil != loginErr && registry.Required {
-		*err = loginErr
+	if nil != loginErr {
+		if registry.Required {
+			*err = loginErr
+		}
 		p.Info(`登录镜像仓库失败`, fields.Connect(field.Error(*err))...)
 	} else {
 		p.Info(`登录镜像仓库成功`, fields...)
