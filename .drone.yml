@@ -33,6 +33,8 @@ steps:
     settings:
       repository: dronestock/docker
       registries:
+        - username: dronestock
+          password: $${PASSWORD_DOCKER}
         - hostname: ccr.ccs.tencentyun.com
           username: "160290688"
           password: $${PASSWORD_CCR}
