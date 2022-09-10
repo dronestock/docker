@@ -1,8 +1,6 @@
 package main
 
 import (
-	"sync"
-
 	"github.com/dronestock/drone"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
@@ -13,19 +11,14 @@ func (p *plugin) login() (undo bool, err error) {
 		return
 	}
 
-	wg := new(sync.WaitGroup)
-	wg.Add(len(p.Registries))
 	for _, _registry := range p.Registries {
-		go p.loginRegistry(_registry, wg, &err)
+		p.loginRegistry(_registry, &err)
 	}
-
-	// 等待所有任务执行完成
-	wg.Wait()
 
 	return
 }
 
-func (p *plugin) loginRegistry(registry registry, wg *sync.WaitGroup, err *error) {
+func (p *plugin) loginRegistry(registry registry, err *error) {
 	args := []interface{}{
 		`login`,
 		`--username`, registry.Username,
@@ -53,7 +46,4 @@ func (p *plugin) loginRegistry(registry registry, wg *sync.WaitGroup, err *error
 	} else {
 		p.Info(`登录镜像仓库成功`, fields...)
 	}
-
-	// 减少等待个数
-	wg.Done()
 }
