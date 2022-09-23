@@ -31,7 +31,7 @@ func (p *plugin) build() (undo bool, err error) {
 	// 通过只添加一个复合标签来减少层
 	args = append(args, `--label`, strings.Join(p.labels(), ` `))
 
-	// 使用本地网络
+	// 使用本地网络，避免网络访问异常
 	args = append(args, `--network`, `host`)
 
 	// 执行代码检查命令
