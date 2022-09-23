@@ -32,7 +32,7 @@ func (p *plugin) build() (undo bool, err error) {
 	args = append(args, `--label`, strings.Join(p.labels(), ` `))
 
 	// 使用本地网络
-	args = append(args, `--network=host`)
+	args = append(args, `--network`, `host`)
 
 	// 执行代码检查命令
 	err = p.Exec(exe, drone.Args(args...), drone.Dir(filepath.Dir(p.Dockerfile)))
