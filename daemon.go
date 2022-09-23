@@ -40,7 +40,7 @@ func (p *plugin) daemon() (undo bool, err error) {
 	}
 
 	// 使用阿里DNS
-	args = append(args, `--dns 223.5.5.5`)
+	args = append(args, `--dns`, `223.5.5.5`)
 
 	// 执行代码检查命令
 	err = p.Exec(daemonExe, drone.Args(args...), drone.Contains(daemonSuccessMark), drone.Async(), drone.Dir(p.Context))
