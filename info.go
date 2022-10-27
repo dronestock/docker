@@ -1,7 +1,7 @@
 package main
 
 import (
-	`github.com/dronestock/drone`
+	"github.com/dronestock/drone"
 )
 
 func (p *plugin) info() (undo bool, err error) {
