@@ -38,7 +38,7 @@ type plugin struct {
 
 	// 启用实验性功能
 	Experimental bool `default:"${PLUGIN_EXPERIMENTAL=${EXPERIMENTAL=true}}"`
-	// 精减镜像导数
+	// 精减镜像层数
 	Squash bool `default:"${PLUGIN_SQUASH=${SQUASH=true}}"`
 	// 压缩镜像
 	Compress bool `default:"${PLUGIN_COMPRESS=${COMPRESS=true}}"`
@@ -70,8 +70,8 @@ func (p *plugin) Config() drone.Config {
 	return p
 }
 
-func (p *plugin) Steps() []*drone.Step {
-	return []*drone.Step{
+func (p *plugin) Steps() drone.Steps {
+	return drone.Steps{
 		drone.NewStep(p.daemon, drone.Name(`启动守护进程`)),
 		drone.NewStep(p.info, drone.Name(`查看Docker信息`)),
 		drone.NewStep(p.login, drone.Name(`登录仓库`)),
