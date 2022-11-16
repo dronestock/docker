@@ -15,9 +15,10 @@ func (p *plugin) push() (undo bool, err error) {
 		return
 	}
 
+	tags := p.tags()
 	wg := new(sync.WaitGroup)
-	wg.Add(len(p.Registries))
-	for _, tag := range p.tags() {
+	wg.Add(len(p.Registries) * len(tags))
+	for _, tag := range tags {
 		for _, _registry := range p.Registries {
 			go p.pushToRegistry(_registry, tag, wg, &err)
 		}
