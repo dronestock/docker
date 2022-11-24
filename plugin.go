@@ -30,7 +30,7 @@ type plugin struct {
 	// 镜像列表
 	Mirrors []string `default:"${PLUGIN_MIRRORS=${MIRRORS}}"`
 	// 标签
-	Tag string `default:"${PLUGIN_TAG=${TAG=${DRONE_TAG=latest}}}"`
+	Tag string `default:"${PLUGIN_TAG=${TAG=${DRONE_TAG=0.0.${DRONE_BUILD_NUMBER}}}}"`
 	// 自动标签
 	AutoTag bool `default:"${PLUGIN_AUTO_TAG=${AUTO_TAG=true}}"`
 	// 名称
