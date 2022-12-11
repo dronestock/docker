@@ -28,7 +28,7 @@ steps:
           required: true
 ```
 
-更多使用教程，请参考[文档](https://www.dronestock.tech/plugin/stock/docker)
+更多使用教程，请参考[使用文档](https://www.dronestock.tech/plugin/stock/docker)
 
 ## 交流
 
