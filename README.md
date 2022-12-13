@@ -30,6 +30,10 @@ steps:
 
 更多使用教程，请参考[使用文档](https://www.dronestock.tech/plugin/stock/docker)
 
+## 教程
+
+[使用文档](https://www.dronestock.tech/plugin/stock/docker)
+
 ## 交流
 
 ![微信群](https://www.dronestock.tech/communication/wxwork.jpg)
