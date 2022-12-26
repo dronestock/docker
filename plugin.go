@@ -22,44 +22,44 @@ type plugin struct {
 	drone.Base
 
 	// 配置文件
-	Dockerfile string `default:"${PLUGIN_DOCKERFILE=${DOCKERFILE=Dockerfile}}" validate:"required"`
+	Dockerfile string `default:"${DOCKERFILE=Dockerfile}" validate:"required"`
 	// 上下文
-	Context string `default:"${PLUGIN_CONTEXT=${CONTEXT=.}}"`
+	Context string `default:"${CONTEXT=.}"`
 	// 主机
-	Host string `default:"${PLUGIN_HOST=${HOST=unix:///var/run/docker.sock}}" validate:"required"`
+	Host string `default:"${HOST=unix:///var/run/docker.sock}" validate:"required"`
 	// 镜像列表
-	Mirrors []string `default:"${PLUGIN_MIRRORS=${MIRRORS}}"`
+	Mirrors []string `default:"${MIRRORS}"`
 	// 标签
-	Tag string `default:"${PLUGIN_TAG=${TAG=${DRONE_TAG=0.0.${DRONE_BUILD_NUMBER}}}}"`
+	Tag string `default:"${TAG=${DRONE_TAG=0.0.${DRONE_BUILD_NUMBER}}}"`
 	// 自动标签
-	AutoTag bool `default:"${PLUGIN_AUTO_TAG=${AUTO_TAG=true}}"`
+	AutoTag bool `default:"${AUTO_TAG=true}"`
 	// 名称
-	Name string `default:"${PLUGIN_NAME=${NAME=${DRONE_COMMIT_SHA=latest}}}"`
+	Name string `default:"${NAME=${DRONE_COMMIT_SHA=latest}}"`
 
 	// 启用实验性功能
-	Experimental bool `default:"${PLUGIN_EXPERIMENTAL=${EXPERIMENTAL=true}}"`
+	Experimental bool `default:"${EXPERIMENTAL=true}"`
 	// 精减镜像层数
-	Squash bool `default:"${PLUGIN_SQUASH=${SQUASH=true}}"`
+	Squash bool `default:"${SQUASH=true}"`
 	// 压缩镜像
-	Compress bool `default:"${PLUGIN_COMPRESS=${COMPRESS=true}}"`
+	Compress bool `default:"${COMPRESS=true}"`
 	// 标签列表
-	Labels []string `default:"${PLUGIN_LABELS=${LABELS}}"`
+	Labels []string `default:"${LABELS}"`
 
 	// 仓库地址
-	Remote string `default:"${PLUGIN_REMOTE=${REMOTE=${DRONE_REMOTE_URL=https://github.com/dronestock/docker}}}"`
+	Remote string `default:"${REMOTE=${DRONE_REMOTE_URL=https://github.com/dronestock/docker}}"`
 	// 镜像链接
 	// nolint:lll
-	Link string `default:"${PLUGIN_LINK=${LINK=${PLUGIN_REPO_LINK=${DRONE_REPO_LINK=https://github.com/dronestock/docker}}}}"`
+	Link string `default:"${LINK=${PLUGIN_REPO_LINK=${DRONE_REPO_LINK=https://github.com/dronestock/docker}}}"`
 
 	// 数据目录
-	DataRoot string `default:"${PLUGIN_DATA_ROOT=${DATA_ROOT=/var/lib/docker}}"`
+	DataRoot string `default:"${DATA_ROOT=/var/lib/docker}"`
 	// 驱动
-	StorageDriver string `default:"${PLUGIN_STORAGE_DRIVER=${STORAGE_DRIVER}}"`
+	StorageDriver string `default:"${STORAGE_DRIVER}"`
 
 	// 仓库列表
-	Registries []registry `default:"${PLUGIN_REGISTRIES=${REGISTRIES}}"`
+	Registries []registry `default:"${REGISTRIES}"`
 	// 仓库
-	Repository string `default:"${PLUGIN_REPOSITORY=${REPOSITORY}}"`
+	Repository string `default:"${REPOSITORY}"`
 }
 
 func newPlugin() drone.Plugin {
@@ -72,33 +72,33 @@ func (p *plugin) Config() drone.Config {
 
 func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
-		drone.NewStep(p.daemon, drone.Name(`启动守护进程`)),
-		drone.NewStep(p.info, drone.Name(`查看Docker信息`)),
-		drone.NewStep(p.login, drone.Name(`登录仓库`)),
-		drone.NewStep(p.build, drone.Name(`编译镜像`)),
-		drone.NewStep(p.push, drone.Name(`推送镜像`)),
+		drone.NewStep(p.daemon, drone.Name("启动守护进程")),
+		drone.NewStep(p.info, drone.Name("查看Docker信息")),
+		drone.NewStep(p.login, drone.Name("登录仓库")),
+		drone.NewStep(p.build, drone.Name("编译镜像")),
+		drone.NewStep(p.push, drone.Name("推送镜像")),
 	}
 }
 
-func (p *plugin) Fields() gox.Fields {
-	return gox.Fields{
-		field.String(`dockerfile`, p.Dockerfile),
-		field.String(`context`, p.Context),
-		field.String(`host`, p.Host),
-		field.Strings(`mirrors`, p.Mirrors...),
-		field.String(`tag`, p.Tag),
-		field.Bool(`auto.tag`, p.AutoTag),
-		field.String(`name`, p.Name),
+func (p *plugin) Fields() gox.Fields[any] {
+	return gox.Fields[any]{
+		field.New("dockerfile", p.Dockerfile),
+		field.New("context", p.Context),
+		field.New("host", p.Host),
+		field.New("mirrors", p.Mirrors),
+		field.New("tag", p.Tag),
+		field.New("tag.auto", p.AutoTag),
+		field.New("name", p.Name),
 
-		field.Bool(`experimental`, p.Experimental),
-		field.Bool(`squash`, p.Squash),
-		field.Bool(`compress`, p.Compress),
-		field.Strings(`labels`, p.Labels...),
+		field.New("experimental", p.Experimental),
+		field.New("squash", p.Squash),
+		field.New("compress", p.Compress),
+		field.New("labels", p.Labels),
 
-		field.String(`remote`, p.Remote),
-		field.String(`link`, p.Link),
+		field.New("remote", p.Remote),
+		field.New("link", p.Link),
 
-		field.String(`repository`, p.Repository),
+		field.New("repository", p.Repository),
 	}
 }
 
@@ -132,28 +132,28 @@ func (p *plugin) tags() (tags map[string]string) {
 		return
 	}
 
-	autos := strings.Split(p.Tag, `.`)
+	autos := strings.Split(p.Tag, ".")
 	_len := len(autos)
 	if 1 == _len {
 		tags[autos[0]] = autos[0]
 	} else if 2 == _len {
 		tags[autos[0]] = autos[0]
-		second := fmt.Sprintf(`%s.%s`, autos[0], autos[1])
+		second := fmt.Sprintf("%s.%s", autos[0], autos[1])
 		tags[second] = second
 	} else if 3 <= _len {
 		tags[autos[0]] = autos[0]
-		second := fmt.Sprintf(`%s.%s`, autos[0], autos[1])
+		second := fmt.Sprintf("%s.%s", autos[0], autos[1])
 		tags[second] = second
-		third := fmt.Sprintf(`%s.%s.%s`, autos[0], autos[1], autos[2])
+		third := fmt.Sprintf("%s.%s.%s", autos[0], autos[1], autos[2])
 		tags[third] = third
 	}
-	tags[`latest`] = `latest`
+	tags["latest"] = "latest"
 
 	return
 }
 
 func (p *plugin) tag() string {
-	return fmt.Sprintf(`%s:%s`, p.Repository, p.Name)
+	return fmt.Sprintf("%s:%s", p.Repository, p.Name)
 }
 
 func (p *plugin) squash() bool {
@@ -161,7 +161,7 @@ func (p *plugin) squash() bool {
 }
 
 func (p *plugin) context() (context string) {
-	if `` == p.Context {
+	if "" == p.Context {
 		context = filepath.Dir(p.Dockerfile)
 	} else {
 		context = p.Context

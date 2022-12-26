@@ -20,9 +20,9 @@ func (p *plugin) login() (undo bool, err error) {
 
 func (p *plugin) loginRegistry(registry registry, err *error) {
 	args := []interface{}{
-		`login`,
-		`--username`, registry.Username,
-		`--password`, registry.Password,
+		"login",
+		"--username", registry.Username,
+		"--password", registry.Password,
 		registry.Hostname,
 	}
 
@@ -34,16 +34,16 @@ func (p *plugin) loginRegistry(registry registry, err *error) {
 	)
 	loginErr := p.Exec(exe, options...)
 
-	fields := gox.Fields{
-		field.String(`registry`, registry.Hostname),
-		field.Strings(`username`, registry.Username),
+	fields := gox.Fields[any]{
+		field.New("registry", registry.Hostname),
+		field.New("username", registry.Username),
 	}
 	if nil != loginErr {
 		if registry.Required {
 			*err = loginErr
 		}
-		p.Info(`登录镜像仓库失败`, fields.Connect(field.Error(*err))...)
+		p.Info("登录镜像仓库失败", fields.Connect(field.Error(*err))...)
 	} else {
-		p.Info(`登录镜像仓库成功`, fields...)
+		p.Info("登录镜像仓库成功", fields...)
 	}
 }

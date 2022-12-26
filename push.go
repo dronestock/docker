@@ -11,7 +11,7 @@ import (
 )
 
 func (p *plugin) push() (undo bool, err error) {
-	if undo = `` == strings.TrimSpace(p.Repository); undo {
+	if undo = "" == strings.TrimSpace(p.Repository); undo {
 		return
 	}
 
@@ -31,25 +31,25 @@ func (p *plugin) push() (undo bool, err error) {
 }
 
 func (p *plugin) pushToRegistry(registry registry, tag string, wg *sync.WaitGroup, err *error) {
-	target := fmt.Sprintf(`%s/%s:%s`, registry.Hostname, p.Repository, tag)
-	fields := gox.Fields{
-		field.String(`registry`, registry.Hostname),
-		field.Strings(`tag`, tag),
+	target := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.Repository, tag)
+	fields := gox.Fields[any]{
+		field.New("registry", registry.Hostname),
+		field.New("tag", tag),
 	}
 
-	if tagErr := p.Exec(exe, drone.Args(`tag`, p.tag(), target)); nil != tagErr {
+	if tagErr := p.Exec(exe, drone.Args("tag", p.tag(), target)); nil != tagErr {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
 		target = p.tag()
 	}
 
-	pushErr := p.Exec(exe, drone.Args(`push`, target))
+	pushErr := p.Exec(exe, drone.Args("push", target))
 	if nil != pushErr {
 		if registry.Required {
 			*err = pushErr
 		}
-		p.Info(`推送镜像失败`, fields.Connect(field.Error(*err))...)
+		p.Info("推送镜像失败", fields.Connect(field.Error(*err))...)
 	} else {
-		p.Info(`推送镜像成功`, fields...)
+		p.Info("推送镜像成功", fields...)
 	}
 
 	// 减少等待个数
