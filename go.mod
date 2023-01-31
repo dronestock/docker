@@ -3,7 +3,7 @@ module github.com/dronestock/docker
 go 1.19
 
 require (
-	github.com/dronestock/drone v0.7.4
+	github.com/dronestock/drone v0.7.6
 	github.com/goexl/gox v0.1.6
 )
 
@@ -17,7 +17,7 @@ require (
 	github.com/goexl/env v0.0.2 // indirect
 	github.com/goexl/exc v0.0.5 // indirect
 	github.com/goexl/gex v0.2.7 // indirect
-	github.com/goexl/mengpo v0.2.3 // indirect
+	github.com/goexl/mengpo v0.2.4 // indirect
 	github.com/goexl/simaqian v0.2.3 // indirect
 	github.com/goexl/xiren v0.0.5 // indirect
 	github.com/google/uuid v1.3.0 // indirect
