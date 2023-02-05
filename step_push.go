@@ -1,26 +1,36 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
 
-	"github.com/dronestock/drone"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 )
 
-func (p *plugin) push() (undo bool, err error) {
-	if undo = "" == strings.TrimSpace(p.Repository); undo {
-		return
-	}
+type stepPush struct {
+	*plugin
+}
 
+func newPushStep(plugin *plugin) *stepPush {
+	return &stepPush{
+		plugin: plugin,
+	}
+}
+
+func (p *stepPush) Runnable() bool {
+	return "" != strings.TrimSpace(p.Repository)
+}
+
+func (p *stepPush) Run(_ context.Context) (err error) {
 	tags := p.tags()
 	wg := new(sync.WaitGroup)
 	wg.Add(len(p.Registries) * len(tags))
 	for _, tag := range tags {
 		for _, _registry := range p.Registries {
-			go p.pushToRegistry(_registry, tag, wg, &err)
+			go p.push(_registry, tag, wg, &err)
 		}
 	}
 
@@ -30,22 +40,22 @@ func (p *plugin) push() (undo bool, err error) {
 	return
 }
 
-func (p *plugin) pushToRegistry(registry registry, tag string, wg *sync.WaitGroup, err *error) {
+func (p *stepPush) push(registry registry, tag string, wg *sync.WaitGroup, err *error) {
 	target := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.Repository, tag)
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),
 		field.New("tag", tag),
 	}
 
-	if tagErr := p.Exec(exe, drone.Args("tag", p.tag(), target)); nil != tagErr {
+	if te := p.Command(exe).Args("tag", p.tag(), target).Exec(); nil != te {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
 		target = p.tag()
 	}
 
-	pushErr := p.Exec(exe, drone.Args("push", target))
-	if nil != pushErr {
+	pe := p.Command(exe).Args("push", target).Exec()
+	if nil != pe {
 		if registry.Required {
-			*err = pushErr
+			*err = pe
 		}
 		p.Info("推送镜像失败", fields.Connect(field.Error(*err))...)
 	} else {

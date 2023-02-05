@@ -72,11 +72,11 @@ func (p *plugin) Config() drone.Config {
 
 func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
-		drone.NewStep(p.daemon, drone.Name("启动守护进程")),
-		drone.NewStep(p.info, drone.Name("查看Docker信息")),
-		drone.NewStep(p.login, drone.Name("登录仓库")),
-		drone.NewStep(p.build, drone.Name("编译镜像")),
-		drone.NewStep(p.push, drone.Name("推送镜像")),
+		drone.NewStep(newDaemonStep(p)).Name("启动守护进程").Build(),
+		drone.NewStep(newInfoStep(p)).Name("查看Docker信息").Build(),
+		drone.NewStep(newLoginStep(p)).Name("登录仓库").Build(),
+		drone.NewStep(newBuildStep(p)).Name("编译镜像").Build(),
+		drone.NewStep(newPushStep(p)).Name("推送镜像").Build(),
 	}
 }
 
@@ -104,7 +104,7 @@ func (p *plugin) Fields() gox.Fields[any] {
 
 func (p *plugin) mirrors() (mirrors []string) {
 	mirrors = make([]string, 0, len(defaultMirrors))
-	if p.Defaults {
+	if p.Default() {
 		mirrors = append(mirrors, defaultMirrors...)
 	}
 	mirrors = append(mirrors, p.Mirrors...)
@@ -114,7 +114,7 @@ func (p *plugin) mirrors() (mirrors []string) {
 
 func (p *plugin) labels() (labels []string) {
 	labels = make([]string, 0, 4+len(p.Labels))
-	if p.Defaults {
+	if p.Default() {
 		labels = append(labels, fmt.Sprintf("created=%s", time.Now().Format(time.RFC3339)))
 		labels = append(labels, fmt.Sprintf("revision=%s", p.Name))
 		labels = append(labels, fmt.Sprintf("source=%s", p.Remote))
