@@ -21,7 +21,7 @@ steps:
         name: docker
 
   - name: 发布
-    image: ccr.ccs.tencentyun.com/dronestock/docker:0.0.214
+    image: ccr.ccs.tencentyun.com/dronestock/docker
     privileged: true
     volumes:
       - name: docker

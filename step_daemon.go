@@ -18,8 +18,13 @@ func newDaemonStep(plugin *plugin) *stepDaemon {
 	}
 }
 
-func (d *stepDaemon) Runnable() bool {
-	return true
+func (d *stepDaemon) Runnable() (runnable bool) {
+	// 当没有/var/run/docker.sock文件时，证明需要启动Docker in Docker模式
+	if _, se := os.Stat(outsideDockerfile); nil != se && os.IsNotExist(se) {
+		runnable = true
+	}
+
+	return
 }
 
 func (d *stepDaemon) Run(_ context.Context) (err error) {
