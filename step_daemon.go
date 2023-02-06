@@ -19,7 +19,7 @@ func newDaemonStep(plugin *plugin) *stepDaemon {
 }
 
 func (d *stepDaemon) Runnable() (runnable bool) {
-	if _, se := os.Stat(outsideDockerfile); nil == se {
+	if _, se := os.Stat(outsideDockerfile); nil == se || (nil != se && os.IsExist(se)) {
 		runnable = true
 	}
 
