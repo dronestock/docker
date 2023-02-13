@@ -80,12 +80,12 @@ func (b *stepBoost) has(content string) (new string, err error) {
 	lowercase := strings.ToLower(content)
 	if !strings.Contains(lowercase, from) {
 		new = content
-	} else if uri, pe := url.Parse(strings.ReplaceAll(lowercase, from, "")); nil != pe {
+	} else if uri, pe := url.Parse(strings.TrimSpace(strings.ReplaceAll(lowercase, from, ""))); nil != pe {
 		err = pe
 	} else if "" == uri.Host {
 		new = fmt.Sprintf("FROM %s/%s", b.Boost.Mirror, strings.TrimSpace(uri.Path))
 	} else if b.check(uri.Host) {
-		new = fmt.Sprintf("%s/%s/%s", b.Boost.Mirror, uri.Host, strings.TrimSpace(uri.Path))
+		new = fmt.Sprintf("FROM %s/%s/%s", b.Boost.Mirror, uri.Host, strings.TrimSpace(uri.Path))
 	} else {
 		new = content
 	}
