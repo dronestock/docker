@@ -70,7 +70,7 @@ func (b *stepBoost) process(_ context.Context, file *os.File) (err error) {
 		err = we
 		b.Warn("写入新的Dockerfile出错", fields.Connect(field.Error(we))...)
 	} else {
-		b.Warn("写入新的Dockerfile成功", fields...)
+		b.Debug("写入新的Dockerfile成功", fields...)
 	}
 
 	return
