@@ -60,6 +60,9 @@ type plugin struct {
 	Registries []registry `default:"${REGISTRIES}"`
 	// 仓库
 	Repository string `default:"${REPOSITORY}"`
+
+	// 加速
+	Boost boost `default:"${BOOST}"`
 }
 
 func newPlugin() drone.Plugin {
@@ -72,11 +75,12 @@ func (p *plugin) Config() drone.Config {
 
 func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
-		drone.NewStep(newDaemonStep(p)).Name("启动守护进程").Build(),
-		drone.NewStep(newInfoStep(p)).Name("查看Docker信息").Build(),
-		drone.NewStep(newLoginStep(p)).Name("登录仓库").Build(),
-		drone.NewStep(newBuildStep(p)).Name("编译镜像").Build(),
-		drone.NewStep(newPushStep(p)).Name("推送镜像").Build(),
+		drone.NewStep(newBoostStep(p)).Name("加速").Build(),
+		drone.NewStep(newDaemonStep(p)).Name("守护").Build(),
+		drone.NewStep(newInfoStep(p)).Name("检查").Build(),
+		drone.NewStep(newLoginStep(p)).Name("登录").Build(),
+		drone.NewStep(newBuildStep(p)).Name("编译").Build(),
+		drone.NewStep(newPushStep(p)).Name("推送").Build(),
 	}
 }
 
@@ -168,4 +172,8 @@ func (p *plugin) context() (context string) {
 	}
 
 	return
+}
+
+func (p *plugin) boostEnabled() bool {
+	return nil != p.Boost.Enabled && *p.Boost.Enabled
 }
