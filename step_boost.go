@@ -42,6 +42,7 @@ func (b *stepBoost) Run(ctx context.Context) (err error) {
 
 func (b *stepBoost) process(_ context.Context, file *os.File) (err error) {
 	defer func() {
+		b.Cleanup().Name("清理加速Dockerfile文件").File(b.Dockerfile).Build()
 		_ = file.Close()
 	}()
 

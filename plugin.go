@@ -84,10 +84,6 @@ func (p *plugin) Steps() drone.Steps {
 	}
 }
 
-func (p *plugin) Cleanup() (err error) {
-	return
-}
-
 func (p *plugin) Fields() gox.Fields[any] {
 	return gox.Fields[any]{
 		field.New("dockerfile", p.Dockerfile),
