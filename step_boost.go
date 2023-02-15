@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/goexl/gox"
+	"github.com/goexl/gox/check"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/gox/rand"
 )
@@ -29,7 +30,7 @@ func (b *stepBoost) Runnable() bool {
 
 func (b *stepBoost) Run(ctx context.Context) (err error) {
 	dockerfile := b.Dockerfile
-	b.Dockerfile = rand.New().String().Generate()
+	b.Dockerfile = fmt.Sprintf("%s.Dockerfile", rand.New().String().Generate())
 
 	if file, oe := os.Open(dockerfile); nil != oe {
 		err = oe
@@ -50,7 +51,7 @@ func (b *stepBoost) process(_ context.Context, file *os.File) (err error) {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
-		if line, he := b.has(scanner.Text()); nil != he {
+		if line, he := b.line(scanner.Text()); nil != he {
 			err = he
 		} else {
 			content.WriteString(line)
@@ -77,33 +78,51 @@ func (b *stepBoost) process(_ context.Context, file *os.File) (err error) {
 	return
 }
 
-func (b *stepBoost) has(content string) (new string, err error) {
-	lowercase := strings.ToLower(content)
-	if !strings.Contains(lowercase, from) {
-		new = content
-	} else if uri, pe := url.Parse(strings.TrimSpace(strings.ReplaceAll(lowercase, from, ""))); nil != pe {
-		err = pe
-	} else if "" == uri.Host {
-		new = fmt.Sprintf("FROM %s/%s", b.Boost.Mirror, strings.TrimSpace(uri.Path))
-	} else if b.check(uri.Host) {
-		new = fmt.Sprintf("FROM %s/%s/%s", b.Boost.Mirror, uri.Host, strings.TrimSpace(uri.Path))
+func (b *stepBoost) line(line string) (new string, err error) {
+	if strings.Contains(line, from) {
+		new, err = b.from(line)
 	} else {
-		new = content
+		new = line
 	}
 
 	return
 }
 
-func (b *stepBoost) check(key string) (has bool) {
-	has = false
-	for _, check := range b.Boost.Hosts {
-		if strings.Contains(key, check) {
-			has = true
-		}
+func (b *stepBoost) from(line string) (new string, err error) {
+	if uri, params, pe := b.parse(line); nil != pe {
+		err = pe
+	} else if b.check(uri.Host) { // 是可以被加速的镜像
+		new = fmt.Sprintf("%s %s%s%s", from, b.mirror(uri.Host), uri.Path, gox.If("" != params, params))
+	} else if !strings.Contains(uri.Host, common) { // 是中央仓库的镜像
+		new = fmt.Sprintf("%s %s/%s%s%s", from, b.Boost.Mirror, uri.Host, uri.Path, gox.If("" != params, params))
+	}
 
-		if has {
-			break
-		}
+	return
+}
+
+func (b *stepBoost) parse(content string) (uri *url.URL, params string, err error) {
+	content = strings.ReplaceAll(content, from, "")
+	if strings.Contains(content, colon) {
+		index := strings.Index(content, colon)
+		original := content
+		content = original[:index]
+		params = original[index:]
+	}
+	// 组成一个正确的地址去解析
+	content = fmt.Sprintf("https://%s", strings.TrimSpace(content))
+	uri, err = url.Parse(content)
+
+	return
+}
+
+func (b *stepBoost) check(key string) bool {
+	return check.New().Any().String(key).Items(b.Boost.Hosts...).Contains().Check()
+}
+
+func (b *stepBoost) mirror(host string) (final string) {
+	second := host[:strings.Index(host, common)]
+	if dockerProxy == b.Boost.Mirror {
+		final = fmt.Sprintf("%s.%s", second, dockerProxy)
 	}
 
 	return
