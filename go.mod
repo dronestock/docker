@@ -3,8 +3,8 @@ module github.com/dronestock/docker
 go 1.19
 
 require (
-	github.com/dronestock/drone v0.8.4
-	github.com/goexl/gox v0.2.1
+	github.com/dronestock/drone v0.8.8
+	github.com/goexl/gox v0.2.3
 )
 
 require (
