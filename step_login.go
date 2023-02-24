@@ -47,7 +47,7 @@ func (l *stepLogin) login(registry registry, err *error) {
 		if registry.Required {
 			*err = loginErr
 		}
-		l.Info("登录镜像仓库失败", fields.Connect(field.Error(*err))...)
+		l.Info("登录镜像仓库失败", fields.Add(field.Error(*err))...)
 	} else {
 		l.Info("登录镜像仓库成功", fields...)
 	}

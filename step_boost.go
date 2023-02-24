@@ -70,7 +70,7 @@ func (b *stepBoost) process(_ context.Context, file *os.File) (err error) {
 	// 写入新文件
 	if we := os.WriteFile(b.Dockerfile, []byte(content.String()), os.ModePerm); nil != we {
 		err = we
-		b.Warn("写入新的Dockerfile出错", fields.Connect(field.Error(we))...)
+		b.Warn("写入新的Dockerfile出错", fields.Add(field.Error(we))...)
 	} else {
 		b.Debug("写入新的Dockerfile成功", fields...)
 	}

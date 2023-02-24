@@ -57,7 +57,7 @@ func (p *stepPush) push(registry registry, tag string, wg *sync.WaitGroup, err *
 		if registry.Required {
 			*err = pe
 		}
-		p.Info("推送镜像失败", fields.Connect(field.Error(*err))...)
+		p.Info("推送镜像失败", fields.Add(field.Error(*err))...)
 	} else {
 		p.Info("推送镜像成功", fields...)
 	}
