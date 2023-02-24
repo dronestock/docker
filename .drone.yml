@@ -40,7 +40,7 @@ steps:
           arch: amd64
 
   - name: 推送
-    image: ccr.ccs.tencentyun.com/dronestock/docker:0.0.243
+    image: ccr.ccs.tencentyun.com/dronestock/docker
     privileged: true
     volumes:
       - name: gopath
