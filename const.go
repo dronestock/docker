@@ -7,6 +7,7 @@ const (
 	colon             = ":"
 	common            = "."
 	slash             = "/"
+	library           = "library"
 	dockerProxy       = "dockerproxy.com"
 	outsideDockerfile = "/var/run/docker.sock"
 	daemonSuccessMark = "API listen on /var/run/docker.sock"

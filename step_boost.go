@@ -95,7 +95,7 @@ func (b *stepBoost) from(line string) (new string, err error) {
 		new = fmt.Sprintf("%s %s%s%s", from, b.mirror(uri.Host), uri.Path, gox.If("" != params, params))
 	} else if !strings.Contains(uri.Host, common) { // 是中央仓库的镜像
 		size := len(strings.Split(uri.Path, slash))
-		path := gox.Ifx(1 == size, fmt.Sprintf("library/%s", uri.Path), uri.Path)
+		path := gox.Ifx(1 == size, fmt.Sprintf("%s/%s", library, uri.Path), uri.Path)
 		new = fmt.Sprintf("%s %s/%s%s%s", from, b.Boost.Mirror, uri.Host, path, gox.If("" != params, params))
 	}
 
