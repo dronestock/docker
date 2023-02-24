@@ -6,6 +6,7 @@ const (
 	from              = "FROM"
 	colon             = ":"
 	common            = "."
+	slash             = "/"
 	dockerProxy       = "dockerproxy.com"
 	outsideDockerfile = "/var/run/docker.sock"
 	daemonSuccessMark = "API listen on /var/run/docker.sock"

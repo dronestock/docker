@@ -43,8 +43,12 @@ steps:
     image: ccr.ccs.tencentyun.com/dronestock/docker
     privileged: true
     volumes:
-      - name: docker
-        path: /var/lib/docker
+      - name: gopath
+        path: /var/lib/gopath
+      - name: gocache
+        path: /var/lib/gocache
+      - name: linter
+        path: /var/lib/linter
     environment:
       PASSWORD_DOCKER:
         from_secret: token_docker
@@ -82,7 +86,7 @@ steps:
       release:
         tag: $${DRONE_TAG}
         token: $${TOKEN}
-        body: exe:file("$${CHANGELOG_TAG_OUTPUT}")
+        body: expr:file("$${CHANGELOG_TAG_OUTPUT}")
         assets:
           - name: $${NAME}-$${VERSION}-linux-amd64
             file: $${OUTPUT_LINUX}
@@ -93,9 +97,15 @@ steps:
 
 
 volumes:
-  - name: go
-    host:
-      path: /var/lib/cache/go
   - name: docker
     host:
       path: /var/lib/cache/docker
+  - name: gopath
+    host:
+      path: /var/lib/cache/gopath
+  - name: gocache
+    host:
+      path: /var/lib/cache/gocache
+  - name: linter
+    host:
+      path: /var/lib/cache/linter
