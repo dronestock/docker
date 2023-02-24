@@ -55,6 +55,8 @@ steps:
       PASSWORD_CCR:
         from_secret: password_tencentyun_ccr
     settings:
+      boost:
+        enabled: false
       repository: dronestock/docker
       registries:
         - username: dronestock
