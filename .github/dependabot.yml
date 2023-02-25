@@ -11,8 +11,8 @@ updates:
     reviewers:
       - storezhang
 
-  - package-ecosystem: npm
-    directory: /doc
+  - package-ecosystem: docker
+    directory: /
     schedule:
       interval: daily
     pull-request-branch-name:
