@@ -41,6 +41,9 @@ func (p *stepPush) Run(_ context.Context) (err error) {
 }
 
 func (p *stepPush) push(registry registry, tag string, wg *sync.WaitGroup, err *error) {
+	// 任何情况下，都必须调用完成方法
+	defer wg.Done()
+
 	target := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.Repository, tag)
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),
@@ -61,7 +64,4 @@ func (p *stepPush) push(registry registry, tag string, wg *sync.WaitGroup, err *
 	} else {
 		p.Info("推送镜像成功", fields...)
 	}
-
-	// 减少等待个数
-	wg.Done()
 }
