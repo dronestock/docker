@@ -96,6 +96,8 @@ func (b *stepBoost) from(line string) (new string, err error) {
 	} else if !strings.Contains(uri.Host, common) { // 是中央仓库的镜像
 		host := gox.Ifx("" == uri.Path, library+slash+uri.Host, uri.Host)
 		new = fmt.Sprintf("%s %s/%s%s%s", from, b.Boost.Mirror, host, uri.Path, gox.If("" != params, params))
+	} else {
+		new = line
 	}
 
 	return
