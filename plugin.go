@@ -136,20 +136,10 @@ func (p *plugin) tags() (tags map[string]string) {
 		return
 	}
 
-	autos := strings.Split(p.Tag, ".")
-	_len := len(autos)
-	if 1 == _len {
-		tags[autos[0]] = autos[0]
-	} else if 2 == _len {
-		tags[autos[0]] = autos[0]
-		second := fmt.Sprintf("%s.%s", autos[0], autos[1])
-		tags[second] = second
-	} else if 3 <= _len {
-		tags[autos[0]] = autos[0]
-		second := fmt.Sprintf("%s.%s", autos[0], autos[1])
-		tags[second] = second
-		third := fmt.Sprintf("%s.%s.%s", autos[0], autos[1], autos[2])
-		tags[third] = third
+	autos := strings.Split(p.Tag, common)
+	for index := range autos {
+		tag := strings.Join(autos[0:index], common)
+		tags[tag] = tag
 	}
 	tags["latest"] = "latest"
 
