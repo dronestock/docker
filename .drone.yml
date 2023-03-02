@@ -19,7 +19,7 @@ steps:
   - name: 代码
     image: ccr.ccs.tencentyun.com/dronestock/git
     commands:
-      - echo $USERNAME
+      - echo $USER
 
   - name: 编译
     image: ccr.ccs.tencentyun.com/pangum/drone
