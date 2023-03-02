@@ -30,7 +30,7 @@ func (d *stepDaemon) Runnable() (runnable bool) {
 func (d *stepDaemon) Run(_ context.Context) (err error) {
 	args := []any{
 		"--data-root", d.DataRoot,
-		fmt.Sprintf("--host=%s", d.Host),
+		fmt.Sprintf("--host=%s", d.host()),
 	}
 
 	if _, se := os.Stat("/etc/docker/default.json"); nil == se {

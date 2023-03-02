@@ -12,10 +12,11 @@ import (
 )
 
 var defaultMirrors = []string{
-	`https://ustc-edu-cn.mirror.aliyuncs.com`,
-	`https://mirror.baidubce.com`,
-	`https://hub.daocloud.io`,
-	`https://mirror.ccs.tencentyun.com`,
+	"dockerproxy.com",
+	"https://ustc-edu-cn.mirror.aliyuncs.com",
+	"https://mirror.baidubce.com",
+	"https://hub.daocloud.io",
+	"https://mirror.ccs.tencentyun.com",
 }
 
 type plugin struct {
@@ -25,8 +26,20 @@ type plugin struct {
 	Dockerfile string `default:"${DOCKERFILE=Dockerfile}" validate:"required"`
 	// 上下文
 	Context string `default:"${CONTEXT=.}"`
+
 	// 主机
-	Host string `default:"${HOST=unix:///var/run/docker.sock}" validate:"required"`
+	Host string `default:"${HOST=/var/run/docker.sock}" validate:"required"`
+	// 端口
+	Port uint `default:"${PORT}" validate:"max=65535"`
+	// 协议
+	Protocol string `default:"${PROTOCOL=${PROTO=unix}}" validate:"oneof=ssh tcp unix"`
+	// 用户名
+	Username string `default:"${USERNAME}" validate:"required_if=Protocol ssh"`
+	// 密码
+	Password string `default:"${PASSWORD}" validate:"required_if=Protocol ssh"`
+	// 密钥
+	Key string `default:"${KEY}" validate:"required_if=Protocol ssh"`
+
 	// 镜像列表
 	Mirrors []string `default:"${MIRRORS}"`
 	// 标签
@@ -75,6 +88,7 @@ func (p *plugin) Config() drone.Config {
 
 func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
+		drone.NewStep(newSshStep(p)).Name("SSH").Build(),
 		drone.NewStep(newBoostStep(p)).Name("加速").Build(),
 		drone.NewStep(newDaemonStep(p)).Name("守护").Build(),
 		drone.NewStep(newInfoStep(p)).Name("检查").Build(),
@@ -104,6 +118,25 @@ func (p *plugin) Fields() gox.Fields[any] {
 
 		field.New("repository", p.Repository),
 	}
+}
+
+func (p *plugin) host() string {
+	builder := new(strings.Builder)
+	builder.WriteString(p.Protocol)
+	builder.WriteString(colon)
+	builder.WriteString(slash)
+	builder.WriteString(slash)
+	if "" != p.Username {
+		builder.WriteString(p.Username)
+		builder.WriteString(dolar)
+	}
+	builder.WriteString(p.Host)
+	if 0 != p.Port {
+		builder.WriteString(colon)
+		builder.WriteString(gox.ToString(p.Port))
+	}
+
+	return builder.String()
 }
 
 func (p *plugin) mirrors() (mirrors []string) {
