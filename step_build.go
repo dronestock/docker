@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"strings"
+
+	"github.com/goexl/gox"
 )
 
 type stepBuild struct {
@@ -20,7 +22,7 @@ func (b *stepBuild) Runnable() bool {
 }
 
 func (b *stepBuild) Run(_ context.Context) (err error) {
-	args := []any{
+	args := gox.Args{
 		"build",
 		"--rm=true",
 		"--file", b.Dockerfile,
@@ -28,26 +30,26 @@ func (b *stepBuild) Run(_ context.Context) (err error) {
 	}
 
 	// 编译上下文
-	args = append(args, b.context())
+	args.Add(b.context())
 
 	// 精减导数
 	if b.squash() {
-		args = append(args, "--squash")
+		args.Add("--squash")
 	}
 	// 压缩
 	if b.Compress {
-		args = append(args, "--compress")
+		args.Add("--compress")
 	}
 
 	// 添加标签
 	// 通过只添加一个复合标签来减少层
-	args = append(args, "--label", strings.Join(b.labels(), " "))
+	args.Add("--label", strings.Join(b.labels(), space))
 
 	// 使用本地网络
-	args = append(args, "--network", "host")
+	args.Add("--network", "host")
 
 	// 执行代码检查命令
-	err = b.Command(exe).Args(args...).Dir(b.context()).Exec()
+	err = b.Command(exe).Args(args...).Dir(b.context()).Build().Exec()
 
 	return
 }

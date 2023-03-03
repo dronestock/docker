@@ -34,6 +34,4 @@ require (
 	golang.org/x/text v0.7.0 // indirect
 )
 
-replace github.com/goexl/gox => ../../goexl/gox
-
 replace github.com/dronestock/drone => ../drone

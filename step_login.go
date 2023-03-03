@@ -31,7 +31,7 @@ func (l *stepLogin) Run(_ context.Context) (err error) {
 }
 
 func (l *stepLogin) login(registry registry, err *error) {
-	args := []any{
+	args := gox.Args{
 		"login",
 		"--username", registry.Username,
 		"--password", registry.Password,
@@ -42,11 +42,9 @@ func (l *stepLogin) login(registry registry, err *error) {
 		field.New("registry", registry.Hostname),
 		field.New("username", registry.Username),
 	}
-	loginErr := l.Command(exe).Args(args...).Checker(drone.Contains(registry.Mark)).Async().Dir(l.context()).Exec()
-	if nil != loginErr {
-		if registry.Required {
-			*err = loginErr
-		}
+	le := l.Command(exe).Args(args...).Checker(drone.Contains(registry.Mark)).Async().Dir(l.context()).Build().Exec()
+	if nil != le && registry.Required {
+		*err = le
 		l.Info("登录镜像仓库失败", fields.Add(field.Error(*err))...)
 	} else {
 		l.Info("登录镜像仓库成功", fields...)

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"os"
 )
 
 type stepInfo struct {
@@ -19,5 +21,6 @@ func (i *stepInfo) Runnable() bool {
 }
 
 func (i *stepInfo) Run(_ context.Context) error {
-	return i.Command(exe).Args("info").Dir(i.context()).Exec()
+	fmt.Println(os.Getenv(dockerHost))
+	return i.Command(exe).Args("info").Dir(i.context()).Build().Exec()
 }

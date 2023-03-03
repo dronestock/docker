@@ -50,16 +50,14 @@ func (p *stepPush) push(registry registry, tag string, wg *sync.WaitGroup, err *
 		field.New("tag", tag),
 	}
 
-	if te := p.Command(exe).Args("tag", p.tag(), target).Exec(); nil != te {
+	if te := p.Command(exe).Args("tag", p.tag(), target).Build().Exec(); nil != te {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
 		target = p.tag()
 	}
 
-	pe := p.Command(exe).Args("push", target).Exec()
-	if nil != pe {
-		if registry.Required {
-			*err = pe
-		}
+	pe := p.Command(exe).Args("push", target).Build().Exec()
+	if nil != pe && registry.Required {
+		*err = pe
 		p.Info("推送镜像失败", fields.Add(field.Error(*err))...)
 	} else {
 		p.Info("推送镜像成功", fields...)

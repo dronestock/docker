@@ -29,20 +29,22 @@ func newSshStep(plugin *plugin) *stepSsh {
 }
 
 func (s *stepSsh) Runnable() bool {
-	return "" != s.Key
+	return "" != s.Key || "" != s.Password
 }
 
 func (s *stepSsh) Run(_ context.Context) (err error) {
 	home := filepath.Join(os.Getenv(homeEnv), sshHome)
 	keyfile := filepath.Join(home, sshKeyFilename)
 	configFile := filepath.Join(home, sshConfigDir)
-	if err = s.makeSSHHome(home); nil != err {
-		return
+	if me := s.makeSSHHome(home); nil != me { // 创建主目录
+		err = me
+	} else if we := s.writeSSHKey(keyfile); nil != we { // 写入密钥文件
+		err = we
+	} else if ce := s.writeSSHConfig(configFile, keyfile); nil != ce { // 写入配置文件
+		err = ce
+	} else { // 设置环境变量
+		_ = os.Setenv(dockerHost, s.host())
 	}
-	if err = s.writeSSHKey(keyfile); nil != err {
-		return
-	}
-	err = s.writeSSHConfig(configFile, keyfile)
 
 	return
 }

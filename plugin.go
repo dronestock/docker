@@ -34,11 +34,14 @@ type plugin struct {
 	// 协议
 	Protocol string `default:"${PROTOCOL=${PROTO=unix}}" validate:"oneof=ssh tcp unix"`
 	// 用户名
-	Username string `default:"${USERNAME}" validate:"required_if=Protocol ssh"`
+	// 因为USERNAME环境变量在Docker镜像里面已经被使用
+	// 所以先用USER环境变量去接收参数
+	// 如果USER没设置而USERNAME被设置，那么接收到的值是正确的，因为环境变量是可以被覆盖的
+	Username string `default:"${USER=${USERNAME}}" validate:"required_if=Protocol ssh"`
 	// 密码
-	Password string `default:"${PASSWORD}" validate:"required_if=Protocol ssh"`
+	Password string `default:"${PASSWORD}" validate:"required_if=Protocol ssh Key"`
 	// 密钥
-	Key string `default:"${KEY}" validate:"required_if=Protocol ssh"`
+	Key string `default:"${KEY}" validate:"required_if=Protocol ssh Password"`
 
 	// 镜像列表
 	Mirrors []string `default:"${MIRRORS}"`
@@ -88,7 +91,7 @@ func (p *plugin) Config() drone.Config {
 
 func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
-		drone.NewStep(newSshStep(p)).Name("SSH").Build(),
+		drone.NewStep(newSshStep(p)).Name("SSH").Build()...,
 		drone.NewStep(newBoostStep(p)).Name("加速").Build(),
 		drone.NewStep(newDaemonStep(p)).Name("守护").Build(),
 		drone.NewStep(newInfoStep(p)).Name("检查").Build(),
@@ -128,13 +131,24 @@ func (p *plugin) host() string {
 	builder.WriteString(slash)
 	if "" != p.Username {
 		builder.WriteString(p.Username)
-		builder.WriteString(dolar)
+		builder.WriteString(dollar)
 	}
 	builder.WriteString(p.Host)
 	if 0 != p.Port {
 		builder.WriteString(colon)
 		builder.WriteString(gox.ToString(p.Port))
 	}
+
+	return builder.String()
+}
+
+func (p *plugin) unix() string {
+	builder := new(strings.Builder)
+	builder.WriteString(p.Protocol)
+	builder.WriteString(colon)
+	builder.WriteString(slash)
+	builder.WriteString(slash)
+	builder.WriteString(p.Host)
 
 	return builder.String()
 }
