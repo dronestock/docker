@@ -26,16 +26,16 @@ steps:
         path: /var/lib/go
     settings:
       outputs:
-        - name: $${NAME}
+        - name: docker/bin/$${NAME}
           os: linux
           arch: amd64
-        - name: $${OUTPUT_LINUX}
+        - name: docker/bin/$${OUTPUT_LINUX}
           os: linux
           arch: amd64
-        - name: $${OUTPUT_WINDOWS}
+        - name: docker/bin/$${OUTPUT_WINDOWS}
           os: windows
           arch: amd64
-        - name: $${OUTPUT_MAC}
+        - name: docker/bin/$${OUTPUT_MAC}
           os: darwin
           arch: amd64
 
@@ -43,12 +43,8 @@ steps:
     image: ccr.ccs.tencentyun.com/dronestock/docker
     privileged: true
     volumes:
-      - name: gopath
-        path: /var/lib/gopath
-      - name: gocache
-        path: /var/lib/gocache
-      - name: linter
-        path: /var/lib/linter
+      - name: go
+        path: /var/lib/go
     environment:
       PASSWORD_DOCKER:
         from_secret: token_docker
@@ -89,23 +85,17 @@ steps:
         body: expr:file("$${CHANGELOG_TAG_OUTPUT}")
         assets:
           - name: $${NAME}-$${VERSION}-linux-amd64
-            file: $${OUTPUT_LINUX}
+            file: docker/bin/$${OUTPUT_LINUX}
           - name: $${NAME}-$${VERSION}-windows-amd64.exe
-            file: $${OUTPUT_WINDOWS}
+            file: docker/bin/$${OUTPUT_WINDOWS}
           - name: $${NAME}-$${VERSION}-darwin-amd64
-            file: $${OUTPUT_MAC}
+            file: docker/bin/$${OUTPUT_MAC}
 
 
 volumes:
   - name: docker
     host:
       path: /var/lib/cache/docker
-  - name: gopath
+  - name: go
     host:
-      path: /var/lib/cache/gopath
-  - name: gocache
-    host:
-      path: /var/lib/cache/gocache
-  - name: linter
-    host:
-      path: /var/lib/cache/linter
+      path: /var/lib/cache/go

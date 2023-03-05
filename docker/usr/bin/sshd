@@ -1,0 +1,38 @@
+#!/bin/sh
+
+ARGS=$(getopt --options u:h:p: --alternative --longoptions username:,host:,port: --name 'gsk' -- "$@")
+if [ $? != 0 ]; then
+    echo "退出..."
+    exit 1
+fi
+
+eval set -- "${ARGS}"
+
+while true; do
+    case "$1" in
+        -u|--username)
+            username=$2;
+            shift
+            ;;
+        -h|--host)
+            host=$2
+            shift
+            ;;
+        -p|--port)
+            port=$2
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "内部错误"
+            exit 1
+            ;;
+    esac
+shift
+done
+
+# 执行程序
+ssh -L 10022:127.0.0.1:"${port}" "${username}"@"${host}"

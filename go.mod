@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/antonmedv/expr v1.12.1 // indirect
 	github.com/drone/envsubst v1.0.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -22,7 +23,6 @@ require (
 	github.com/goexl/xiren v0.0.5 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/leodido/go-urn v1.2.2 // indirect
-	github.com/maja42/goval v1.3.1 // indirect
 	github.com/rs/xid v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
