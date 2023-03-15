@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/goexl/gox"
+	"github.com/goexl/gox/args"
 	"github.com/goexl/gox/field"
 )
 
@@ -50,12 +51,14 @@ func (p *stepPush) push(registry registry, tag string, wg *sync.WaitGroup, err *
 		field.New("tag", tag),
 	}
 
-	if te := p.Command(exe).Args("tag", p.tag(), target).Build().Exec(); nil != te {
+	ta := args.New().Build().Subcommand("tag").Add(p.tag(), target).Build()
+	if _, te := p.Command(exe).Args(ta).Build().Exec(); nil != te {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
 		target = p.tag()
 	}
 
-	pe := p.Command(exe).Args("push", target).Build().Exec()
+	pa := args.New().Build().Subcommand("push").Add(target).Build()
+	_, pe := p.Command(exe).Args(pa).Build().Exec()
 	if nil != pe && registry.Required {
 		*err = pe
 		p.Info("推送镜像失败", fields.Add(field.Error(*err))...)

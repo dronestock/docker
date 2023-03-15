@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/goexl/gox"
+	"github.com/goexl/gox/args"
 )
 
 type stepBuild struct {
@@ -22,34 +22,33 @@ func (b *stepBuild) Runnable() bool {
 }
 
 func (b *stepBuild) Run(_ context.Context) (err error) {
-	args := gox.Args{
-		"build",
-		"--rm=true",
-		"--file", b.Dockerfile,
-		"--tag", b.tag(),
-	}
+	ba := args.New().Build()
+	ba.Subcommand("build")
+	ba.Arg("rm", "true")
+	ba.Arg("file", b.Dockerfile)
+	ba.Arg("tag", b.tag())
 
 	// 编译上下文
-	args.Add(b.context())
+	ba.Add(b.context())
 
 	// 精减导数
 	if b.squash() {
-		args.Add("--squash")
+		ba.Flag("squash")
 	}
 	// 压缩
 	if b.Compress {
-		args.Add("--compress")
+		ba.Flag("compress")
 	}
 
 	// 添加标签
 	// 通过只添加一个复合标签来减少层
-	args.Add("--label", strings.Join(b.labels(), space))
+	ba.Arg("label", strings.Join(b.labels(), space))
 
 	// 使用本地网络
-	args.Add("--network", "host")
+	ba.Arg("network", "host")
 
 	// 执行代码检查命令
-	err = b.Command(exe).Args(args...).Dir(b.context()).Build().Exec()
+	_, err = b.Command(exe).Args(ba.Build()).Dir(b.context()).Build().Exec()
 
 	return
 }

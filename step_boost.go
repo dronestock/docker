@@ -30,7 +30,7 @@ func (b *stepBoost) Runnable() bool {
 
 func (b *stepBoost) Run(ctx context.Context) (err error) {
 	dockerfile := b.Dockerfile
-	b.Dockerfile = fmt.Sprintf("%s.Dockerfile", rand.New().String().Generate())
+	b.Dockerfile = fmt.Sprintf("%s.Dockerfile", rand.New().String().Build().Generate())
 
 	if file, oe := os.Open(dockerfile); nil != oe {
 		err = oe

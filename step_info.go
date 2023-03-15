@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
+
+	"github.com/goexl/gox/args"
 )
 
 type stepInfo struct {
@@ -20,7 +20,9 @@ func (i *stepInfo) Runnable() bool {
 	return true
 }
 
-func (i *stepInfo) Run(_ context.Context) error {
-	fmt.Println(os.Getenv(dockerHost))
-	return i.Command(exe).Args("info").Dir(i.context()).Build().Exec()
+func (i *stepInfo) Run(_ context.Context) (err error) {
+	ia := args.New().Build().Subcommand("info").Build()
+	_, err = i.Command(exe).Args(ia).Dir(i.context()).Build().Exec()
+
+	return
 }

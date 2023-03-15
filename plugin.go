@@ -12,7 +12,7 @@ import (
 )
 
 var defaultMirrors = []string{
-	"dockerproxy.com",
+	"https://dockerproxy.com",
 	"https://ustc-edu-cn.mirror.aliyuncs.com",
 	"https://mirror.baidubce.com",
 	"https://hub.daocloud.io",
