@@ -23,7 +23,7 @@ clone:
 
 
 environment:
-  NAME: docker
+  NAME: dockerd
   OUTPUT_LINUX: docker.amd64.lin
   OUTPUT_WINDOWS: docker.amd64.exe
   OUTPUT_MAC: docker.amd64.mac
@@ -43,16 +43,16 @@ steps:
         path: /var/lib/go
     settings:
       outputs:
-        - name: docker/bin/$${NAME}
+        - name: $${NAME}
           os: linux
           arch: amd64
-        - name: docker/bin/$${OUTPUT_LINUX}
+        - name: $${OUTPUT_LINUX}
           os: linux
           arch: amd64
-        - name: docker/bin/$${OUTPUT_WINDOWS}
+        - name: $${OUTPUT_WINDOWS}
           os: windows
           arch: amd64
-        - name: docker/bin/$${OUTPUT_MAC}
+        - name: $${OUTPUT_MAC}
           os: darwin
           arch: amd64
 
@@ -105,11 +105,11 @@ steps:
         body: expr:file("$${CHANGELOG_TAG_OUTPUT}")
         assets:
           - name: $${NAME}-$${VERSION}-linux-amd64
-            file: docker/bin/$${OUTPUT_LINUX}
+            file: $${OUTPUT_LINUX}
           - name: $${NAME}-$${VERSION}-windows-amd64.exe
-            file: docker/bin/$${OUTPUT_WINDOWS}
+            file: $${OUTPUT_WINDOWS}
           - name: $${NAME}-$${VERSION}-darwin-amd64
-            file: docker/bin/$${OUTPUT_MAC}
+            file: $${OUTPUT_MAC}
 
 
 volumes:

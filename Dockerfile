@@ -1,4 +1,13 @@
-FROM storezhang/alpine:3.17.2
+FROM ccr.ccs.tencentyun.com/storezhang/alpine:3.17.2 AS builder
+
+# 复制执行文件
+COPY dockerd /docker/usr/local/bin/
+# 复制脚本
+COPY docker /docker
+
+
+
+FROM ccr.ccs.tencentyun.com/storezhang/alpine:3.17.2
 
 
 LABEL author="storezhang<华寅>" \
@@ -8,8 +17,8 @@ LABEL author="storezhang<华寅>" \
     description="Drone持续集成Docker插件，增加以下功能：1、多镜像仓库支持；2、镜像推送；3、镜像编译；4、多镜像仓库登录"
 
 
-# 复制文件
-COPY docker /
+# 复制文件，多个复制命令都合并成一个
+COPY --from=builder /docker /
 
 
 RUN set -ex \
@@ -26,7 +35,7 @@ RUN set -ex \
     \
     \
     # 增加执行权限
-    && chmod +x /bin/docker \
+    && chmod +x /usr/local/bin/* \
     \
     \
     \
@@ -34,4 +43,4 @@ RUN set -ex \
 
 
 # 执行命令
-ENTRYPOINT /bin/docker
+ENTRYPOINT /usr/local/bin/dockerd
