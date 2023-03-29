@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	panic(drone.New(newPlugin).Boot())
+	drone.New(newPlugin).Boot()
 }

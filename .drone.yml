@@ -1,6 +1,21 @@
+kind: secret
+name: token_docker
+get:
+  path: secrets
+  name: token_docker_dronestock
+---
+
+kind: secret
+name: password_ccr
+get:
+  path: secrets
+  name: password_ccr
+---
+
+
 kind: pipeline
 type: docker
-name: Docker插件
+name: 发布
 
 
 clone:
@@ -18,9 +33,11 @@ environment:
 steps:
   - name: 代码
     image: ccr.ccs.tencentyun.com/dronestock/git
+    pull: always
 
   - name: 编译
     image: ccr.ccs.tencentyun.com/pangum/drone
+    pull: always
     volumes:
       - name: go
         path: /var/lib/go
@@ -41,6 +58,7 @@ steps:
 
   - name: 推送
     image: ccr.ccs.tencentyun.com/dronestock/docker
+    pull: always
     privileged: true
     volumes:
       - name: go
@@ -49,7 +67,7 @@ steps:
       PASSWORD_DOCKER:
         from_secret: token_docker
       PASSWORD_CCR:
-        from_secret: password_tencentyun_ccr
+        from_secret: password_ccr
     settings:
       repository: dronestock/docker
       registries:
@@ -62,6 +80,7 @@ steps:
 
   - name: 改变
     image: ccr.ccs.tencentyun.com/dronestock/changelog
+    pull: always
     when:
       event:
         - tag
@@ -71,6 +90,7 @@ steps:
 
   - name: 发布
     image: ccr.ccs.tencentyun.com/dronestock/github
+    pull: always
     when:
       event:
         - tag

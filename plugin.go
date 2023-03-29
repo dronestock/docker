@@ -39,9 +39,9 @@ type plugin struct {
 	// 如果USER没设置而USERNAME被设置，那么接收到的值是正确的，因为环境变量是可以被覆盖的
 	Username string `default:"${USER=${USERNAME}}" validate:"required_if=Protocol ssh"`
 	// 密码
-	Password string `default:"${PASSWORD}" validate:"required_if=Protocol ssh Key"`
+	Password string `default:"${PASSWORD}" validate:"required_if=Protocol ssh Key ''"`
 	// 密钥
-	Key string `default:"${KEY}" validate:"required_if=Protocol ssh Password"`
+	Key string `default:"${KEY}" validate:"required_if=Protocol ssh Password ''"`
 
 	// 镜像列表
 	Mirrors []string `default:"${MIRRORS}"`
@@ -91,7 +91,7 @@ func (p *plugin) Config() drone.Config {
 
 func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
-		drone.NewStep(newSshStep(p)).Name("SSH").Build()...,
+		drone.NewStep(newSshStep(p)).Name("SSH").Build(),
 		drone.NewStep(newBoostStep(p)).Name("加速").Build(),
 		drone.NewStep(newDaemonStep(p)).Name("守护").Build(),
 		drone.NewStep(newInfoStep(p)).Name("检查").Build(),
