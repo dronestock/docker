@@ -45,10 +45,9 @@ func (d *stepDaemon) Run(_ context.Context) (err error) {
 	}
 
 	// 使用阿里DNS
-	da.Arg("--dns", "223.5.5.5")
-
+	da.Arg("dns", "223.5.5.5")
 	// 执行代码检查命令
-	_, err = d.Command(daemonExe).Args(da.Build()).Checker().Contains(daemonSuccessMark).Dir(d.context()).Build().Exec()
+	_, err = d.Command(daemonExe).Args(da.Build()).Checker().Contains(daemonSuccessMark).Dir(d.context()).Async().Build().Exec()
 
 	return
 }

@@ -8,8 +8,8 @@ const (
 	defaultFilePerm = 0600
 	unix            = "unix"
 
-	exe               = "docker"
-	daemonExe         = "dockerd"
+	exe               = "/usr/bin/docker"
+	daemonExe         = "/usr/bin/dockerd"
 	dockerHost        = "DOCKER_HOST"
 	from              = "FROM"
 	colon             = ":"
