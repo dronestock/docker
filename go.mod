@@ -3,8 +3,8 @@ module github.com/dronestock/docker
 go 1.19
 
 require (
-	github.com/dronestock/drone v0.9.4
-	github.com/goexl/gox v0.3.1
+	github.com/dronestock/drone v0.9.5
+	github.com/goexl/gox v0.3.2
 )
 
 require (
@@ -34,9 +34,3 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 )
-
-replace github.com/dronestock/drone => ../drone
-
-replace github.com/goexl/simaqian => ../../goexl/simaqian
-
-replace github.com/goexl/gox => ../../goexl/gox
