@@ -42,6 +42,8 @@ type plugin struct {
 	Password string `default:"${PASSWORD}" validate:"required_if=Protocol ssh Key ''"`
 	// 密钥
 	Key string `default:"${KEY}" validate:"required_if=Protocol ssh Password ''"`
+	// 启动成功后的标志
+	Mark string `default:"${MARK=API listen on /var/run/docker.sock}"`
 
 	// 镜像列表
 	Mirrors []string `default:"${MIRRORS}"`
