@@ -46,7 +46,7 @@ type plugin struct {
 	// 镜像列表
 	Mirrors []string `default:"${MIRRORS}"`
 	// 标签
-	Tag string `default:"${TAG=${DRONE_TAG=0.0.${DRONE_BUILD_NUMBER}}}"`
+	Tag string `default:"${TAG=${DRONE_TAG=0.0.${DRONE_BUILD_NUMBER}}}" validate:"required"`
 	// 自动标签
 	AutoTag bool `default:"${AUTO_TAG=true}"`
 	// 名称
@@ -185,7 +185,7 @@ func (p *plugin) tags() (tags map[string]string) {
 
 	autos := strings.Split(p.Tag, common)
 	for index := range autos {
-		tag := strings.Join(autos[0:index], common)
+		tag := strings.Join(autos[0:index+1], common)
 		tags[tag] = tag
 	}
 	tags["latest"] = "latest"
