@@ -41,7 +41,7 @@ func (p *stepPush) Run(_ context.Context) (err error) {
 	return
 }
 
-func (p *stepPush) push(registry registry, tag string, wg *sync.WaitGroup, err *error) {
+func (p *stepPush) push(registry *registry, tag string, wg *sync.WaitGroup, err *error) {
 	// 任何情况下，都必须调用完成方法
 	defer wg.Done()
 

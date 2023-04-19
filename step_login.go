@@ -30,7 +30,7 @@ func (l *stepLogin) Run(_ context.Context) (err error) {
 	return
 }
 
-func (l *stepLogin) login(registry registry, err *error) {
+func (l *stepLogin) login(registry *registry, err *error) {
 	la := args.New().Build()
 	la.Subcommand("login")
 	la.Arg("username", registry.Username)
