@@ -74,8 +74,10 @@ type plugin struct {
 	// 驱动
 	StorageDriver string `default:"${STORAGE_DRIVER}"`
 
+	// 仓库
+	Registry *registry `default:"${REGISTRY}"`
 	// 仓库列表
-	Registries []registry `default:"${REGISTRIES}"`
+	Registries []*registry `default:"${REGISTRIES}"`
 	// 仓库
 	Repository string `default:"${REPOSITORY}"`
 
@@ -103,6 +105,14 @@ func (p *plugin) Steps() drone.Steps {
 	}
 }
 
+func (p *plugin) Setup() (err error) {
+	if nil != p.Registry {
+		p.Registries = append(p.Registries, p.Registry)
+	}
+
+	return
+}
+
 func (p *plugin) Fields() gox.Fields[any] {
 	return gox.Fields[any]{
 		field.New("dockerfile", p.Dockerfile),
@@ -121,6 +131,7 @@ func (p *plugin) Fields() gox.Fields[any] {
 		field.New("remote", p.Remote),
 		field.New("link", p.Link),
 
+		field.New("registries", p.Registries),
 		field.New("repository", p.Repository),
 	}
 }
