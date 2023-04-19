@@ -79,7 +79,7 @@ func (b *stepBoost) process(_ context.Context, file *os.File) (err error) {
 }
 
 func (b *stepBoost) line(line string) (new string, err error) {
-	if strings.Contains(line, from) {
+	if !strings.HasPrefix(line, comment) && strings.Contains(line, from) {
 		new, err = b.from(line)
 	} else {
 		new = line

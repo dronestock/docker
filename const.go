@@ -7,6 +7,7 @@ const (
 	sshKeyFilename  = "id_rsa"
 	defaultFilePerm = 0600
 	unix            = "unix"
+	comment         = "#"
 
 	exe         = "/usr/bin/docker"
 	daemonExe   = "/usr/bin/dockerd"
