@@ -31,7 +31,7 @@ environment:
 
 
 steps:
-  - name: 代码
+  - name: 取码
     image: ccr.ccs.tencentyun.com/dronestock/git
     pull: always
 
