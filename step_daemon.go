@@ -24,7 +24,7 @@ func (d *stepDaemon) Runnable() (runnable bool) {
 func (d *stepDaemon) Run(_ context.Context) (err error) {
 	da := args.New().Build()
 	da.Arg("data-root", d.DataRoot)
-	da.Arg("host", d.unix())
+	da.Arg("host", d.address())
 
 	if _, se := os.Stat("/etc/docker/default.json"); nil == se {
 		da.Arg("seccomp-profile", "/etc/docker/default.json")

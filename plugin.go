@@ -155,7 +155,7 @@ func (p *plugin) host() string {
 	return builder.String()
 }
 
-func (p *plugin) unix() string {
+func (p *plugin) address() string {
 	builder := new(strings.Builder)
 	builder.WriteString(p.Protocol)
 	builder.WriteString(colon)

@@ -12,6 +12,13 @@ get:
   name: password_ccr
 ---
 
+kind: secret
+name: token_github
+get:
+  path: secrets
+  name: token_github_storezhang
+---
+
 
 kind: pipeline
 type: docker
@@ -102,7 +109,7 @@ steps:
       release:
         tag: $${DRONE_TAG}
         token: $${TOKEN}
-        body: expr:file("$${CHANGELOG_TAG_OUTPUT}")
+        body: file("$${CHANGELOG_TAG_OUTPUT}")
         assets:
           - name: $${NAME}-$${VERSION}-linux-amd64
             file: $${OUTPUT_LINUX}
