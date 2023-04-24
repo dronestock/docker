@@ -70,9 +70,9 @@ type plugin struct {
 	Link string `default:"${LINK=${PLUGIN_REPO_LINK=${DRONE_REPO_LINK=https://github.com/dronestock/docker}}}"`
 
 	// 数据目录
-	DataRoot string `default:"${DATA_ROOT=/var/lib/docker}"`
+	Data string `default:"${DATA=/var/lib/docker}"`
 	// 驱动
-	StorageDriver string `default:"${STORAGE_DRIVER}"`
+	Driver string `default:"${DRIVER}"`
 
 	// 仓库
 	Registry *registry `default:"${REGISTRY}"`
@@ -98,7 +98,6 @@ func (p *plugin) Steps() drone.Steps {
 		drone.NewStep(newSshStep(p)).Name("SSH").Build(),
 		drone.NewStep(newBoostStep(p)).Name("加速").Build(),
 		drone.NewStep(newDaemonStep(p)).Name("守护").Build(),
-		drone.NewStep(newInfoStep(p)).Name("检查").Build(),
 		drone.NewStep(newLoginStep(p)).Name("登录").Build(),
 		drone.NewStep(newBuildStep(p)).Name("编译").Build(),
 		drone.NewStep(newPushStep(p)).Name("推送").Build(),
