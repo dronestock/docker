@@ -48,7 +48,9 @@ func (p *stepPush) push(registry *registry, tag string, wg *sync.WaitGroup, err 
 	target := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.Repository, tag)
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),
+		field.New("repository", p.Repository),
 		field.New("tag", tag),
+		field.New("target", target),
 	}
 
 	ta := args.New().Build().Subcommand("tag").Add(p.tag(), target).Build()
