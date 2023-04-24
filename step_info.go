@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/goexl/gox/args"
 	"github.com/goexl/gox/field"
@@ -31,6 +32,7 @@ func (i *stepInfo) Run(ctx context.Context) (err error) {
 		} else {
 			i.Info("等待Docker启动完成", field.New("times", times), field.New("address", i.address()))
 		}
+		time.Sleep(5 * time.Second)
 	}
 
 	return
