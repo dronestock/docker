@@ -45,21 +45,21 @@ func (p *stepPush) push(registry *registry, tag string, wg *sync.WaitGroup, err 
 	// 任何情况下，都必须调用完成方法
 	defer wg.Done()
 
-	target := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.Repository, tag)
+	image := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.Repository, tag)
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),
 		field.New("repository", p.Repository),
 		field.New("tag", tag),
-		field.New("target", target),
+		field.New("image", image),
 	}
 
-	ta := args.New().Build().Subcommand("tag").Add(p.tag(), target).Build()
+	ta := args.New().Build().Subcommand("tag").Add(p.tag(), image).Build()
 	if _, te := p.Command(exe).Args(ta).Build().Exec(); nil != te {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
-		target = p.tag()
+		image = p.tag()
 	}
 
-	pa := args.New().Build().Subcommand("push").Add(target).Build()
+	pa := args.New().Build().Subcommand("push").Add(image).Build()
 	_, pe := p.Command(exe).Args(pa).Build().Exec()
 	if nil != pe && registry.Required {
 		*err = pe
