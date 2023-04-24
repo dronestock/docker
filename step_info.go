@@ -30,7 +30,11 @@ func (i *stepInfo) Run(ctx context.Context) (err error) {
 		if err = i.check(ctx); nil == err || errors.Is(err, context.DeadlineExceeded) {
 			break
 		} else {
-			i.Info("等待Docker启动完成", field.New("times", times), field.New("address", i.address()))
+			i.Info(
+				"等待Docker启动完成",
+				field.New("timeout", i.Timeout), field.New("times", times),
+				field.New("address", i.address()),
+			)
 		}
 		time.Sleep(5 * time.Second)
 	}
