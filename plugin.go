@@ -95,7 +95,7 @@ func (p *plugin) Config() drone.Config {
 
 func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
-		drone.NewStep(newSshStep(p)).Name("SSH").Build(),
+		drone.NewStep(newSshStep(p)).Name("授权").Build(),
 		drone.NewStep(newBoostStep(p)).Name("加速").Build(),
 		drone.NewStep(newDaemonStep(p)).Name("守护").Build(),
 		drone.NewStep(newLoginStep(p)).Name("登录").Build(),
