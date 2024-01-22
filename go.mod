@@ -3,7 +3,7 @@ module github.com/dronestock/docker
 go 1.21
 
 require (
-	github.com/dronestock/drone v1.1.3
+	github.com/dronestock/drone v1.1.4
 	github.com/goexl/gox v0.3.8
 	github.com/goexl/log v0.0.7
 	github.com/rs/xid v1.5.0
@@ -31,5 +31,3 @@ require (
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 )
-
-replace github.com/dronestock/drone => ../drone
