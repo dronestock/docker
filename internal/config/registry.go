@@ -1,6 +1,6 @@
-package main
+package config
 
-type registry struct {
+type Registry struct {
 	// 仓库地址
 	Hostname string `default:"docker.io" json:"hostname" validate:"required,hostname"`
 	// 用户名
