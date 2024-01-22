@@ -84,7 +84,8 @@ func (s *Ssh) writeSSHKey(keyfile string) (err error) {
 
 func (s *Ssh) writeSSHConfig(configFile string, keyfile string) (err error) {
 	configFileField := field.New("file", configFile)
-	if err = os.WriteFile(configFile, []byte(fmt.Sprintf(sshConfigFormatter, keyfile)), constant.DefaultFilePerm); nil != err {
+	content := []byte(fmt.Sprintf(sshConfigFormatter, keyfile))
+	if err = os.WriteFile(configFile, content, constant.DefaultFilePerm); nil != err {
 		s.logger.Error("写入SSH配置文件出错", configFileField, field.Error(err))
 	}
 

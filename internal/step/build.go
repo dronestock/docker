@@ -94,7 +94,7 @@ func (b *Build) labels() (labels []string) {
 }
 
 func (b *Build) tag() string {
-	return fmt.Sprintf(xid.New().String())
+	return xid.New().String()
 }
 
 func (b *Build) squash() bool {

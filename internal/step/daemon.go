@@ -93,7 +93,8 @@ func (d *Daemon) startup(_ *context.Context) (err error) {
 	// 使用阿里DNS
 	da.Arg("dns", "223.5.5.5")
 	// 执行代码检查命令
-	_, err = d.base.Command(constant.DaemonExe).Args(da.Build()).Checker().Contains(d.docker.Mark).Dir(d.dir()).Build().Exec()
+	mark := d.docker.Mark
+	_, err = d.base.Command(constant.DaemonExe).Args(da.Build()).Checker().Contains(mark).Dir(d.dir()).Build().Exec()
 
 	return
 }
