@@ -40,8 +40,8 @@ func (p *Push) Run(ctx *context.Context) (err error) {
 	wg := new(sync.WaitGroup)
 	wg.Add(len(p.registries) * len(tags))
 	for _, tag := range tags {
-		for _, _registry := range p.registries {
-			go p.push(ctx, _registry, tag, wg, &err)
+		for _, registry := range p.registries {
+			go p.push(ctx, registry, tag, wg, &err)
 		}
 	}
 	// 等待所有任务执行完成
@@ -67,6 +67,9 @@ func (p *Push) push(ctx *context.Context, registry *config.Registry, tag string,
 	if _, te := p.base.Command(constant.Exe).Args(ta).Build().Exec(); nil != te {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
 		image = original
+	} else { // ! 清理打包好的镜像（垃圾文件，不清理会导致磁盘空间占用过大）
+		ida := args.New().Build().Subcommand("image", "rm", tag)
+		p.base.Cleanup().Command(constant.Exe).Args(ida.Build()).Build().Build()
 	}
 
 	pa := args.New().Build().Subcommand("push").Add(image).Build()
