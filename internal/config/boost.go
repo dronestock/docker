@@ -2,7 +2,7 @@ package config
 
 type Boost struct {
 	// 是否开户
-	Enabled bool `default:"true" json:"enabled"`
+	Enabled bool `json:"enabled"`
 	// 加速服务器
 	Mirror string `default:"dockerproxy.com" json:"mirror"`
 	// 可被加速的地址
