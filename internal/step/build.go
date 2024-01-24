@@ -74,7 +74,7 @@ func (b *Build) Run(ctx *context.Context) (err error) {
 		*ctx = context.WithValue(*ctx, constant.KeyTag, tag)
 		// ! 清理打包好的镜像（垃圾文件，不清理会导致磁盘空间占用过大）
 		ida := args.New().Build().Subcommand("image", "rm", tag)
-		b.base.Cleanup().Command(constant.Exe).Args(ida.Build()).Build().Build()
+		b.base.Cleanup().Command(constant.Exe).Args(ida.Build()).Build().Name(fmt.Sprintf("删除镜像：%s", tag)).Build()
 	}
 
 	return

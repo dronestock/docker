@@ -69,7 +69,7 @@ func (p *Push) push(ctx *context.Context, registry *config.Registry, tag string,
 		image = original
 	} else { // ! 清理打包好的镜像（垃圾文件，不清理会导致磁盘空间占用过大）
 		ida := args.New().Build().Subcommand("image", "rm", tag)
-		p.base.Cleanup().Command(constant.Exe).Args(ida.Build()).Build().Build()
+		p.base.Cleanup().Command(constant.Exe).Args(ida.Build()).Build().Name(fmt.Sprintf("删除镜像：%s", tag)).Build()
 	}
 
 	pa := args.New().Build().Subcommand("push").Add(image).Build()

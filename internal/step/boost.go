@@ -53,7 +53,8 @@ func (b *Boost) Run(ctx *context.Context) (err error) {
 
 func (b *Boost) process(_ *context.Context, file *os.File) (err error) {
 	defer func() {
-		b.base.Cleanup().Name("清理加速Dockerfile文件").File(b.docker.Dockerfile).Build()
+		name := fmt.Sprintf("删除文件：%s", b.docker.Dockerfile)
+		b.base.Cleanup().Name("清理加速Dockerfile文件").File(b.docker.Dockerfile).Name(name).Build()
 		_ = file.Close()
 	}()
 
