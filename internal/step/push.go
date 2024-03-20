@@ -94,7 +94,12 @@ func (p *Push) tags() (tags map[string]string) {
 		tag := strings.Join(autos[0:index+1], constant.Common)
 		tags[tag] = tag
 	}
-	tags["latest"] = "latest"
+
+	if "" != p.docker.Prefix || "" != p.docker.Suffix {
+		tags["latest"] = ""
+	} else {
+		tags["latest"] = "latest"
+	}
 
 	return
 }
