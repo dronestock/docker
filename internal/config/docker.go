@@ -30,6 +30,8 @@ type Docker struct {
 	Tag string `default:"${TAG=${DRONE_TAG=0.0.${DRONE_BUILD_NUMBER}}}" json:"tag,omitempty" validate:"required"`
 	// 前缀
 	Prefix string `default:"${PREFIX}" json:"prefix,omitempty"`
+	// 中间
+	Middle string `default:"${MIDDLE}" json:"middle,omitempty"`
 	// 后缀
 	Suffix string `default:"${SUFFIX}" json:"suffix,omitempty"`
 	// 自动标签

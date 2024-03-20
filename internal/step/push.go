@@ -40,8 +40,15 @@ func (p *Push) Run(ctx *context.Context) (err error) {
 	wg := new(sync.WaitGroup)
 	wg.Add(len(p.registries) * len(tags))
 	for _, tag := range tags {
+		final := gox.StringBuilder(p.docker.Prefix)
+		if "" != tag {
+			final.Append(p.docker.Middle)
+		}
+		final.Append(tag)
+		final.Append(p.docker.Suffix)
+
 		for _, registry := range p.registries {
-			go p.push(ctx, registry, gox.StringBuilder(p.docker.Prefix, tag, p.docker.Suffix).String(), wg, &err)
+			go p.push(ctx, registry, final.String(), wg, &err)
 		}
 	}
 	// 等待所有任务执行完成
