@@ -22,11 +22,7 @@ type Push struct {
 	logger     log.Logger
 }
 
-func NewPush(
-	base *drone.Base,
-	docker *config.Docker, registries []*config.Registry,
-	prefix string, suffix string,
-	logger log.Logger) *Push {
+func NewPush(base *drone.Base, docker *config.Docker, registries []*config.Registry, logger log.Logger) *Push {
 	return &Push{
 		base:       base,
 		docker:     docker,
