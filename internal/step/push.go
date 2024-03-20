@@ -19,8 +19,6 @@ type Push struct {
 	base       *drone.Base
 	docker     *config.Docker
 	registries []*config.Registry
-	prefix     string
-	suffix     string
 	logger     log.Logger
 }
 
@@ -33,8 +31,6 @@ func NewPush(
 		base:       base,
 		docker:     docker,
 		registries: registries,
-		prefix:     prefix,
-		suffix:     suffix,
 		logger:     logger,
 	}
 }
@@ -49,7 +45,7 @@ func (p *Push) Run(ctx *context.Context) (err error) {
 	wg.Add(len(p.registries) * len(tags))
 	for _, tag := range tags {
 		for _, registry := range p.registries {
-			go p.push(ctx, registry, gox.StringBuilder(p.prefix, tag, p.suffix).String(), wg, &err)
+			go p.push(ctx, registry, gox.StringBuilder(p.docker.Prefix, tag, p.docker.Suffix).String(), wg, &err)
 		}
 	}
 	// 等待所有任务执行完成
