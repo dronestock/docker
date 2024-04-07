@@ -17,10 +17,10 @@ type plugin struct {
 	// 项目
 	config.Project `default:"${PROJECT}"`
 
-	// 仓库
-	Registry *config.Registry `default:"${REGISTRY}"`
-	// 仓库列表
-	Registries []*config.Registry `default:"${REGISTRIES}"`
+	// 目标
+	Target *config.Target `default:"${TARGET}"`
+	// 目标列表
+	Targets []*config.Target `default:"${TARGETS}"`
 }
 
 func New() drone.Plugin {
@@ -36,15 +36,15 @@ func (p *plugin) Steps() drone.Steps {
 		drone.NewStep(step.NewSsh(&p.Base, &p.Docker, p.Logger)).Name("授权").Build(),
 		drone.NewStep(step.NewBoost(&p.Base, &p.Docker, &p.Boost, p.Logger)).Name("加速").Build(),
 		drone.NewStep(step.NewDaemon(&p.Base, &p.Docker, p.Logger)).Name("守护").Build(),
-		drone.NewStep(step.NewLogin(&p.Base, &p.Docker, p.Registries, p.Logger)).Name("登录").Build(),
+		drone.NewStep(step.NewLogin(&p.Base, &p.Docker, p.Targets, p.Logger)).Name("登录").Build(),
 		drone.NewStep(step.NewBuild(&p.Base, &p.Docker, &p.Project, p.Registries, p.Logger)).Name("编译").Build(),
 		drone.NewStep(step.NewPush(&p.Base, &p.Docker, p.Registries, p.Logger)).Name("推送").Build(),
 	}
 }
 
 func (p *plugin) Setup() (err error) {
-	if nil != p.Registry {
-		p.Registries = append(p.Registries, p.Registry)
+	if nil != p.Target {
+		p.Targets = append(p.Targets, p.Target)
 	}
 
 	return
@@ -52,8 +52,7 @@ func (p *plugin) Setup() (err error) {
 
 func (p *plugin) Fields() gox.Fields[any] {
 	return gox.Fields[any]{
-		field.New("dockerfile", p.Dockerfile),
-		field.New("context", p.Context),
+		field.New("targets", p.Targets),
 		field.New("host", p.Host),
 		field.New("mirrors", p.Mirrors),
 		field.New("tag", p.Tag),

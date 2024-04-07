@@ -13,28 +13,51 @@ import (
 )
 
 type Login struct {
-	base       *drone.Base
-	registries []*config.Registry
-	docker     *config.Docker
-	logger     log.Logger
+	base    *drone.Base
+	targets []*config.Target
+	docker  *config.Docker
+	logger  log.Logger
 }
 
-func NewLogin(base *drone.Base, docker *config.Docker, registries []*config.Registry, logger log.Logger) *Login {
+func NewLogin(base *drone.Base, docker *config.Docker, targets []*config.Target, logger log.Logger) *Login {
 	return &Login{
-		base:       base,
-		docker:     docker,
-		registries: registries,
-		logger:     logger,
+		base:    base,
+		docker:  docker,
+		targets: targets,
+		logger:  logger,
 	}
 }
 
-func (l *Login) Runnable() bool {
-	return 0 != len(l.registries)
+func (l *Login) Runnable() (runnable bool) {
+	for _, target := range l.targets {
+		if nil != target.Registry || 0 != len(target.Registries) {
+			runnable = true
+		}
+		if runnable {
+			break
+		}
+	}
+
+	return
 }
 
 func (l *Login) Run(ctx *context.Context) (err error) {
-	for _, registry := range l.registries {
-		l.login(ctx, registry, &err)
+	for _, target := range l.targets {
+		l.run(ctx, target, &err)
+	}
+
+	return
+}
+
+func (l *Login) run(ctx *context.Context, target *config.Target, err *error) {
+	registries := make([]*config.Registry, 0, len(target.Registries)+1)
+	if nil != target.Registry {
+		registries = append(registries, target.Registry)
+	}
+	registries = append(registries, target.Registries...)
+
+	for _, registry := range registries {
+		l.login(ctx, registry, err)
 	}
 
 	return
@@ -51,6 +74,8 @@ func (l *Login) login(ctx *context.Context, registry *config.Registry, err *erro
 		field.New("registry", registry.Hostname),
 		field.New("username", registry.Username),
 	}
+	l.logger.Info("准备登录镜像仓库", fields...)
+
 	dir := (*ctx).Value(constant.KeyDir).(string)
 	_, le := l.base.Command(constant.Exe).Args(la.Build()).Checker().Contains(registry.Mark).Dir(dir).Build().Exec()
 	if nil != le && registry.Required {

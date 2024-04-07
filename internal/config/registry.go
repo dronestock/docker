@@ -11,4 +11,11 @@ type Registry struct {
 	Required bool `json:"required"`
 	// 登录成功标志
 	Mark string `default:"Login Succeeded" json:"mark"`
+
+	Name string `default:"未设置"`
+	name string
+}
+
+func (r *Registry) Name() string {
+
 }
