@@ -62,7 +62,7 @@ func (b *Build) run(ctx *context.Context, target *config.Target, err *error) {
 
 	// 精减层数
 	if b.squash() {
-		// ba.Flag("squash")
+		ba.Flag("squash")
 	}
 	// 压缩
 	if b.docker.Compress {
