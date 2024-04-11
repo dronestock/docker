@@ -54,8 +54,6 @@ func (b *Boost) run(ctx *context.Context, target *config.Target, err *error) {
 	} else if pe := b.process(ctx, target, file); nil != pe {
 		*err = pe
 	}
-
-	return
 }
 
 func (b *Boost) process(_ *context.Context, target *config.Target, original *os.File) (err error) {

@@ -38,7 +38,7 @@ func (l *Login) Runnable() bool {
 }
 
 func (l *Login) Run(ctx *context.Context) (err error) {
-	registries := make(config.Registries, 0, len(l.registries)+len(l.targets.Registries()))
+	registries := make(config.Registries, len(l.registries)+len(l.targets.Registries()))
 	registries = append(l.registries, l.targets.Registries()...)
 	for _, registry := range registries {
 		l.login(ctx, registry, &err)

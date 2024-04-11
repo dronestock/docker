@@ -40,5 +40,5 @@ type Docker struct {
 	// 执行程序
 	Exe string `default:"${EXE=/usr/bin/docker}" json:"exe,omitempty"`
 	// 执行程序
-	Daemon string `default:"${DAEMON=/usr/bin/dockerd}" json:"exe,omitempty"`
+	Daemon string `default:"${DAEMON=/usr/bin/dockerd}" json:"daemon,omitempty"`
 }
