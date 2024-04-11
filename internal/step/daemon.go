@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -58,16 +57,13 @@ func (d *Daemon) Run(ctx *context.Context) (err error) {
 				field.New("address", d.address()),
 			)
 		}
-		time.Sleep(5 * time.Second)
-	}
-	if nil == err { // 注入上下文，供后续步骤使用
-		*ctx = context.WithValue(*ctx, constant.KeyDir, d.dir())
+		time.Sleep(1 * time.Second)
 	}
 
 	return
 }
 
-func (d *Daemon) startup(_ *context.Context) (err error) {
+func (d *Daemon) startup(ctx *context.Context) (err error) {
 	da := args.New().Build()
 	da.Arg("data-root", d.docker.Data)
 	da.Arg("host", d.address())
@@ -94,14 +90,14 @@ func (d *Daemon) startup(_ *context.Context) (err error) {
 	da.Arg("dns", "223.5.5.5")
 	// 执行代码检查命令
 	mark := d.docker.Mark
-	_, err = d.base.Command(constant.DaemonExe).Args(da.Build()).Checker().Contains(mark).Dir(d.dir()).Build().Exec()
+	_, err = d.base.Command(d.docker.Daemon).Context(*ctx).Args(da.Build()).Checker().Contains(mark).Build().Exec()
 
 	return
 }
 
-func (d *Daemon) check(_ *context.Context) (err error) {
+func (d *Daemon) check(ctx *context.Context) (err error) {
 	ia := args.New().Build().Subcommand("info").Build()
-	_, err = d.base.Command(constant.Exe).Args(ia).Dir(d.dir()).Build().Exec()
+	_, err = d.base.Command(d.docker.Exe).Context(*ctx).Args(ia).Build().Exec()
 
 	return
 }
@@ -125,14 +121,4 @@ func (d *Daemon) address() string {
 	builder.WriteString(d.docker.Host)
 
 	return builder.String()
-}
-
-func (d *Daemon) dir() (context string) {
-	if "" == d.docker.Context {
-		context = filepath.Dir(d.docker.Dockerfile)
-	} else {
-		context = d.docker.Context
-	}
-
-	return
 }

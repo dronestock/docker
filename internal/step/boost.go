@@ -19,18 +19,18 @@ import (
 )
 
 type Boost struct {
-	base   *drone.Base
-	docker *config.Docker
-	config *config.Boost
-	logger log.Logger
+	base    *drone.Base
+	targets config.Targets
+	config  *config.Boost
+	logger  log.Logger
 }
 
-func NewBoost(base *drone.Base, docker *config.Docker, config *config.Boost, logger log.Logger) *Boost {
+func NewBoost(base *drone.Base, targets config.Targets, config *config.Boost, logger log.Logger) *Boost {
 	return &Boost{
-		base:   base,
-		docker: docker,
-		config: config,
-		logger: logger,
+		base:    base,
+		targets: targets,
+		config:  config,
+		logger:  logger,
 	}
 }
 
@@ -39,27 +39,34 @@ func (b *Boost) Runnable() bool {
 }
 
 func (b *Boost) Run(ctx *context.Context) (err error) {
-	dockerfile := b.docker.Dockerfile
-	b.docker.Dockerfile = fmt.Sprintf("%s.Dockerfile", rand.New().String().Build().Generate())
-
-	if file, oe := os.Open(dockerfile); nil != oe {
-		err = oe
-	} else if pe := b.process(ctx, file); nil != pe {
-		err = pe
+	for _, target := range b.targets {
+		b.run(ctx, target, &err)
 	}
 
 	return
 }
 
-func (b *Boost) process(_ *context.Context, file *os.File) (err error) {
+func (b *Boost) run(ctx *context.Context, target *config.Target, err *error) {
+	dockerfile := target.Dockerfile
+	target.Dockerfile = fmt.Sprintf("%s.Dockerfile", rand.New().String().Build().Generate())
+	if file, oe := os.Open(dockerfile); nil != oe {
+		*err = oe
+	} else if pe := b.process(ctx, target, file); nil != pe {
+		*err = pe
+	}
+
+	return
+}
+
+func (b *Boost) process(_ *context.Context, target *config.Target, original *os.File) (err error) {
 	defer func() {
-		name := fmt.Sprintf("删除文件：%s", b.docker.Dockerfile)
-		b.base.Cleanup().Name("清理加速Dockerfile文件").File(b.docker.Dockerfile).Name(name).Build()
-		_ = file.Close()
+		name := fmt.Sprintf("删除文件：%s", target.Dockerfile)
+		b.base.Cleanup().Name("清理加速Dockerfile文件").File(target.Dockerfile).Name(name).Build()
+		_ = original.Close()
 	}()
 
 	content := new(strings.Builder)
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(original)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		if line, he := b.line(scanner.Text()); nil != he {
@@ -76,10 +83,10 @@ func (b *Boost) process(_ *context.Context, file *os.File) (err error) {
 
 	fields := gox.Fields[any]{
 		field.New("content", content.String()),
-		field.New("filename", b.docker.Dockerfile),
+		field.New("filename", target.Dockerfile),
 	}
 	// 写入新文件
-	if we := os.WriteFile(b.docker.Dockerfile, []byte(content.String()), os.ModePerm); nil != we {
+	if we := os.WriteFile(target.Dockerfile, []byte(content.String()), os.ModePerm); nil != we {
 		err = we
 		b.logger.Warn("写入新的Dockerfile出错", fields.Add(field.Error(we))...)
 	} else {

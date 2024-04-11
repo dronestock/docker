@@ -1,5 +1,11 @@
 package config
 
+import (
+	"path/filepath"
+
+	"github.com/rs/xid"
+)
+
 type Target struct {
 	// 配置文件
 	Dockerfile string `default:"${DOCKERFILE=Dockerfile}" json:"dockerfile,omitempty" validate:"required"`
@@ -23,4 +29,34 @@ type Target struct {
 	Registry *Registry `json:"registry,omitempty"`
 	// 仓库列表
 	Registries []*Registry `json:"registries,omitempty"`
+
+	tag string
+}
+
+func (t *Target) LocalTag() string {
+	if "" == t.tag {
+		t.tag = xid.New().String()
+	}
+
+	return t.tag
+}
+
+func (t *Target) AllRegistries() (registries []*Registry) {
+	registries = make([]*Registry, 0, len(t.Registries)+1)
+	if nil != t.Registry {
+		registries = append(registries, t.Registry)
+	}
+	registries = append(registries, t.Registries...)
+
+	return
+}
+
+func (t *Target) Dir() (context string) {
+	if "" == t.Context {
+		context = filepath.Dir(t.Dockerfile)
+	} else {
+		context = t.Context
+	}
+
+	return
 }

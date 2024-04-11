@@ -9,8 +9,6 @@ const (
 	Unix            = "unix"
 	Comment         = "#"
 
-	Exe         = "/usr/bin/docker"
-	DaemonExe   = "/usr/bin/dockerd"
 	DockerHost  = "DOCKER_HOST"
 	From        = "FROM"
 	Colon       = ":"

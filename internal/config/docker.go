@@ -37,4 +37,8 @@ type Docker struct {
 
 	// 仓库
 	Repository string `default:"${REPOSITORY}" json:"repository,omitempty"`
+	// 执行程序
+	Exe string `default:"${EXE=/usr/bin/docker}" json:"exe,omitempty"`
+	// 执行程序
+	Daemon string `default:"${DAEMON=/usr/bin/dockerd}" json:"exe,omitempty"`
 }
