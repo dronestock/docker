@@ -52,7 +52,7 @@ func (p *Push) Run(ctx *context.Context) (err error) {
 func (p *Push) run(ctx *context.Context, target *config.Target, err *error) {
 	tags := p.tags(target)
 	wg := new(sync.WaitGroup)
-	wg.Add(len(p.registries) + len(target.AllRegistries())*len(tags))
+	wg.Add((len(p.registries) + len(target.AllRegistries())) * len(tags))
 	for _, tag := range tags {
 		final := gox.StringBuilder(target.Prefix)
 		if "" != tag {
