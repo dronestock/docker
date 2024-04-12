@@ -16,11 +16,12 @@ import (
 )
 
 var defaultMirrors = []string{
-	"https://dockerproxy.com",
-	"https://ustc-edu-cn.mirror.aliyuncs.com",
-	"https://mirror.baidubce.com",
-	"https://hub.daocloud.io",
-	"https://mirror.ccs.tencentyun.com",
+	"https://docker.nju.edu.cn",               // 南京大学镜像站
+	"https://docker.m.daocloud.io",            // DaoCloud镜像站
+	"https://dockerproxy.com",                 // Docker镜像代理
+	"https://mirror.iscas.ac.cn",              // 中科院软件所镜像站
+	"https://docker.mirrors.sjtug.sjtu.edu.c", // 上海交大镜像站
+	"https://mirror.baidubce.com",             // 百度云
 }
 
 type Daemon struct {
