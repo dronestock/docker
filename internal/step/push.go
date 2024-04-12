@@ -87,7 +87,7 @@ func (p *Push) push(
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),
 		field.New("repository", p.docker.Repository),
-		field.New("remoteTag", remoteTag),
+		field.New("tag", remoteTag),
 		field.New("image", image),
 	}
 
