@@ -94,7 +94,8 @@ func (p *Push) push(
 		p.command.Remove(remote, fmt.Sprintf("删除镜像：%s", remote))
 	}
 
-	if pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(image).Build()); nil != pe && registry.Required {
+	pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(image).Build())
+	if nil != pe && registry.Required {
 		*err = pe
 		p.command.Info("推送镜像失败", fields.Add(field.Error(*err))...)
 	} else {
