@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dronestock/docker/internal/config"
+	"github.com/dronestock/docker/internal/internal/config"
 	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/dronestock/drone"
 	"github.com/goexl/gox"

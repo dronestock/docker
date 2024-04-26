@@ -3,33 +3,30 @@ package step
 import (
 	"context"
 
-	"github.com/dronestock/docker/internal/config"
-	"github.com/dronestock/drone"
+	"github.com/dronestock/docker/internal/internal/command"
+	"github.com/dronestock/docker/internal/internal/config"
+	"github.com/dronestock/docker/internal/internal/key"
+	"github.com/goexl/args"
 	"github.com/goexl/gox"
-	"github.com/goexl/gox/args"
 	"github.com/goexl/gox/field"
-	"github.com/goexl/log"
 )
 
 type Login struct {
-	base       *drone.Base
-	docker     *config.Docker
+	command    *command.Docker
+	config     *config.Docker
 	registries config.Registries
 	targets    config.Targets
-	logger     log.Logger
 }
 
 func NewLogin(
-	base *drone.Base,
-	docker *config.Docker, registries config.Registries, targets config.Targets,
-	logger log.Logger,
+	command *command.Docker, config *config.Docker,
+	registries config.Registries, targets config.Targets,
 ) *Login {
 	return &Login{
-		base:       base,
-		docker:     docker,
+		command:    command,
+		config:     config,
 		registries: registries,
 		targets:    targets,
-		logger:     logger,
 	}
 }
 
@@ -49,24 +46,23 @@ func (l *Login) Run(ctx *context.Context) (err error) {
 }
 
 func (l *Login) login(ctx *context.Context, registry *config.Registry, err *error) {
-	la := args.New().Build()
-	la.Subcommand("login")
-	la.Arg("username", registry.Username)
-	la.Arg("password", registry.Password)
-	la.Add(registry.Hostname)
+	arguments := args.New().Build()
+	arguments.Subcommand("login")
+	arguments.Argument("username", registry.Username)
+	arguments.Argument("password", registry.Password)
+	arguments.Add(registry.Hostname)
 
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),
 		field.New("username", registry.Username),
 		field.New("name", registry.Nickname()),
 	}
-	l.logger.Info("准备登录镜像仓库", fields...)
-
-	_, le := l.base.Command(l.docker.Exe).Context(*ctx).Args(la.Build()).Checker().Contains(registry.Mark).Build().Exec()
-	if nil != le && registry.Required {
+	l.command.Info("准备登录镜像仓库", fields...)
+	mark := context.WithValue(*ctx, key.ContextMark, registry.Mark)
+	if le := l.command.Exec(mark, arguments.Build()); nil != le && registry.Required {
 		*err = le
-		l.logger.Info("登录镜像仓库失败", fields.Add(field.Error(*err))...)
+		l.command.Info("登录镜像仓库失败", fields.Add(field.Error(*err))...)
 	} else {
-		l.logger.Info("登录镜像仓库成功", fields...)
+		l.command.Info("登录镜像仓库成功", fields...)
 	}
 }

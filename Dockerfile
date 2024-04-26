@@ -1,7 +1,7 @@
 FROM ccr.ccs.tencentyun.com/storezhang/alpine:3.19.1 AS builder
 
 # 复制执行文件
-COPY dockerd /docker/usr/local/bin/
+# COPY dockerd /docker/usr/local/bin/
 # 复制脚本
 COPY docker /docker
 
@@ -40,6 +40,10 @@ RUN set -ex \
     \
     \
     && rm -rf /var/cache/apk/*
+
+
+COPY dockerd /usr/local/bin/
+RUN chmod +x /usr/local/bin/*
 
 
 # 执行命令

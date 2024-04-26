@@ -20,17 +20,17 @@ get:
 ---
 
 kind: secret
-name: feishu_id
+name: id_feishu
 get:
   path: secrets
-  name: feishu_id
+  name: id_feishu
 ---
 
 kind: secret
-name: feishu_secret
+name: secret_feishu
 get:
   path: secrets
-  name: feishu_secret
+  name: secret_feishu
 ---
 
 
@@ -141,9 +141,11 @@ steps:
         - failure
     settings:
       id:
-        from_secret: feishu_id
+        from_secret: id_feishu
       secret:
-        from_secret: feishu_secret
+        from_secret: secret_feishu
+      notfound:
+        id: storezhang
 
 
 volumes:

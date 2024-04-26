@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/dronestock/docker/internal/config"
+	"github.com/dronestock/docker/internal/internal/config"
 	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/dronestock/drone"
 	"github.com/goexl/gox"
@@ -15,41 +15,33 @@ import (
 	"github.com/goexl/log"
 )
 
-const sshConfigFormatter = `Host *
-  IgnoreUnknown UseKeychain
-  UseKeychain yes
-  AddKeysToAgent yes
-  StrictHostKeyChecking=no
-  IdentityFile %s
-`
-
-type Ssh struct {
+type SSH struct {
 	base   *drone.Base
 	docker *config.Docker
 	logger log.Logger
 }
 
-func NewSsh(base *drone.Base, docker *config.Docker, logger log.Logger) *Ssh {
-	return &Ssh{
+func NewSSH(base *drone.Base, docker *config.Docker, logger log.Logger) *SSH {
+	return &SSH{
 		base:   base,
 		docker: docker,
 		logger: logger,
 	}
 }
 
-func (s *Ssh) Runnable() bool {
+func (s *SSH) Runnable() bool {
 	return "" != s.docker.Key || "" != s.docker.Password
 }
 
-func (s *Ssh) Run(_ *context.Context) (err error) {
+func (s *SSH) Run(_ *context.Context) (err error) {
 	home := filepath.Join(os.Getenv(constant.HomeEnv), constant.SshHome)
 	keyfile := filepath.Join(home, constant.SshKeyFilename)
 	configFile := filepath.Join(home, constant.SshConfigDir)
-	if me := s.makeSSHHome(home); nil != me { // 创建主目录
+	if me := s.makeHome(home); nil != me { // 创建主目录
 		err = me
-	} else if we := s.writeSSHKey(keyfile); nil != we { // 写入密钥文件
+	} else if we := s.writeKey(keyfile); nil != we { // 写入密钥文件
 		err = we
-	} else if ce := s.writeSSHConfig(configFile, keyfile); nil != ce { // 写入配置文件
+	} else if ce := s.writeConfig(configFile, keyfile); nil != ce { // 写入配置文件
 		err = ce
 	} else { // 设置环境变量
 		_ = os.Setenv(constant.DockerHost, s.host())
@@ -58,7 +50,7 @@ func (s *Ssh) Run(_ *context.Context) (err error) {
 	return
 }
 
-func (s *Ssh) makeSSHHome(home string) (err error) {
+func (s *SSH) makeHome(home string) (err error) {
 	homeField := field.New("home", home)
 	if err = os.MkdirAll(home, os.ModePerm); nil != err {
 		s.logger.Error("创建SSH目录出错", homeField, field.Error(err))
@@ -67,7 +59,7 @@ func (s *Ssh) makeSSHHome(home string) (err error) {
 	return
 }
 
-func (s *Ssh) writeSSHKey(keyfile string) (err error) {
+func (s *SSH) writeKey(keyfile string) (err error) {
 	key := s.docker.Key
 	keyfileField := field.New("keyfile", keyfile)
 	// 必须以换行符结束
@@ -82,9 +74,9 @@ func (s *Ssh) writeSSHKey(keyfile string) (err error) {
 	return
 }
 
-func (s *Ssh) writeSSHConfig(configFile string, keyfile string) (err error) {
+func (s *SSH) writeConfig(configFile string, keyfile string) (err error) {
 	configFileField := field.New("file", configFile)
-	content := []byte(fmt.Sprintf(sshConfigFormatter, keyfile))
+	content := []byte(fmt.Sprintf(constant.SSHConfigFormatter, keyfile))
 	if err = os.WriteFile(configFile, content, constant.DefaultFilePerm); nil != err {
 		s.logger.Error("写入SSH配置文件出错", configFileField, field.Error(err))
 	}
@@ -92,7 +84,7 @@ func (s *Ssh) writeSSHConfig(configFile string, keyfile string) (err error) {
 	return
 }
 
-func (s *Ssh) host() string {
+func (s *SSH) host() string {
 	builder := new(strings.Builder)
 	builder.WriteString(s.docker.Protocol)
 	builder.WriteString(constant.Colon)

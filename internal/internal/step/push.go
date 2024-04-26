@@ -4,36 +4,32 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"sync"
 
-	"github.com/dronestock/docker/internal/config"
+	"github.com/dronestock/docker/internal/internal/command"
+	"github.com/dronestock/docker/internal/internal/config"
 	"github.com/dronestock/docker/internal/internal/constant"
-	"github.com/dronestock/drone"
+	"github.com/goexl/args"
 	"github.com/goexl/gox"
-	"github.com/goexl/gox/args"
 	"github.com/goexl/gox/field"
-	"github.com/goexl/log"
+	"github.com/goexl/guc"
 )
 
 type Push struct {
-	base       *drone.Base
-	docker     *config.Docker
+	command    *command.Docker
+	config     *config.Docker
 	registries config.Registries
 	targets    config.Targets
-	logger     log.Logger
 }
 
 func NewPush(
-	base *drone.Base,
-	docker *config.Docker, registries config.Registries, targets config.Targets,
-	logger log.Logger,
+	command *command.Docker, config *config.Docker,
+	registries config.Registries, targets config.Targets,
 ) *Push {
 	return &Push{
-		base:       base,
+		command:    command,
 		registries: registries,
-		docker:     docker,
+		config:     config,
 		targets:    targets,
-		logger:     logger,
 	}
 }
 
@@ -51,7 +47,7 @@ func (p *Push) Run(ctx *context.Context) (err error) {
 
 func (p *Push) run(ctx *context.Context, target *config.Target, err *error) {
 	tags := p.tags(target)
-	wg := new(sync.WaitGroup)
+	wg := new(guc.WaitGroup)
 	wg.Add((len(p.registries) + len(target.AllRegistries())) * len(tags))
 	for _, tag := range tags {
 		final := gox.StringBuilder(target.Prefix)
@@ -77,36 +73,32 @@ func (p *Push) run(ctx *context.Context, target *config.Target, err *error) {
 func (p *Push) push(
 	ctx *context.Context,
 	registry *config.Registry,
-	localTag string, remoteTag string,
-	wg *sync.WaitGroup, err *error,
+	local string, remote string,
+	wg *guc.WaitGroup, err *error,
 ) {
 	// 任何情况下，都必须调用完成方法
 	defer wg.Done()
 
-	image := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.docker.Repository, remoteTag)
+	image := fmt.Sprintf("%s/%s:%s", registry.Hostname, p.config.Repository, remote)
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),
-		field.New("repository", p.docker.Repository),
-		field.New("tag", remoteTag),
+		field.New("repository", p.config.Repository),
+		field.New("tag", remote),
 		field.New("image", image),
 	}
 
-	ta := args.New().Build().Subcommand("tag").Add(localTag, image).Build()
-	if _, te := p.base.Command(p.docker.Exe).Context(*ctx).Args(ta).Build().Exec(); nil != te {
+	if te := p.command.Exec(*ctx, args.New().Build().Subcommand("tag").Add(local, image).Build()); nil != te {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
-		image = localTag
+		image = local
 	} else { // ! 清理打包好的镜像（垃圾文件，不清理会导致磁盘空间占用过大）
-		ida := args.New().Build().Subcommand("image", "rm", remoteTag)
-		p.base.Cleanup().Command(p.docker.Exe).Args(ida.Build()).Build().Name(fmt.Sprintf("删除镜像：%s", remoteTag)).Build()
+		p.command.Remove(remote, fmt.Sprintf("删除镜像：%s", remote))
 	}
 
-	pa := args.New().Build().Subcommand("push").Add(image).Build()
-	_, pe := p.base.Command(p.docker.Exe).Context(*ctx).Args(pa).Build().Exec()
-	if nil != pe && registry.Required {
+	if pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(image).Build()); nil != pe && registry.Required {
 		*err = pe
-		p.logger.Info("推送镜像失败", fields.Add(field.Error(*err))...)
+		p.command.Info("推送镜像失败", fields.Add(field.Error(*err))...)
 	} else {
-		p.logger.Info("推送镜像成功", fields...)
+		p.command.Info("推送镜像成功", fields...)
 	}
 }
 
