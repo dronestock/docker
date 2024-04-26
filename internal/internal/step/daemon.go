@@ -90,7 +90,7 @@ func (d *Daemon) startup(ctx *context.Context) (err error) {
 	// 使用阿里域名解析
 	arguments.Argument("dns", "223.5.5.5")
 	// 启动后台进程
-	d.command.Daemon(ctx, arguments.Build(), d.config.Mark)
+	err = d.command.Daemon(ctx, arguments.Build(), d.config.Mark)
 
 	return
 }
