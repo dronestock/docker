@@ -28,9 +28,9 @@ type Target struct {
 	Name string `default:"${NAME=${DRONE_COMMIT_SHA=latest}}" json:"name,omitempty"`
 
 	// 操作系统
-	Os string `default:"${OS}" json:"os,omitempty" validate:"omitempty,oneof=linux"`
+	Os string `default:"${OS=linux}" json:"os,omitempty" validate:"omitempty,oneof=linux windows"`
 	// 架构
-	Arch string `default:"${ARCH}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 386 arm arm64"`
+	Arch string `default:"${ARCH}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 i386 arm32v7 arm64v8"`
 
 	// 仓库
 	Registry *Registry `json:"registry,omitempty"`
