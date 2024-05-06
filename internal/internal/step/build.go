@@ -69,6 +69,11 @@ func (b *Build) run(ctx *context.Context, target *config.Target, err *error) {
 	// 使用本地网络
 	arguments.Argument("network", "host")
 
+	// 多平台编译
+	if "" != target.Platform() {
+		arguments.Argument("platform", target.Platform())
+	}
+
 	// 执行代码检查命令
 	dir := context.WithValue(*ctx, key.ContextDir, directory)
 	if ee := b.command.Exec(dir, arguments.Build()); nil == ee {

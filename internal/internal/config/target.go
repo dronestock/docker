@@ -3,6 +3,8 @@ package config
 import (
 	"path/filepath"
 
+	"github.com/dronestock/docker/internal/internal/constant"
+	"github.com/goexl/gox"
 	"github.com/rs/xid"
 )
 
@@ -24,6 +26,11 @@ type Target struct {
 	Auto bool `default:"${AUTO=true}" json:"auto,omitempty"`
 	// 名称
 	Name string `default:"${NAME=${DRONE_COMMIT_SHA=latest}}" json:"name,omitempty"`
+
+	// 操作系统
+	Os string `default:"${OS}" json:"os,omitempty" validate:"omitempty,oneof=linux"`
+	// 架构
+	Arch string `default:"${ARCH}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 386 arm arm64"`
 
 	// 仓库
 	Registry *Registry `json:"registry,omitempty"`
@@ -56,6 +63,14 @@ func (t *Target) Dir() (context string) {
 		context = filepath.Dir(t.Dockerfile)
 	} else {
 		context = t.Context
+	}
+
+	return
+}
+
+func (t *Target) Platform() (platform string) {
+	if "" != t.Os && "" != t.Arch {
+		platform = gox.StringBuilder(t.Os, constant.Slash, t.Arch).String()
 	}
 
 	return
