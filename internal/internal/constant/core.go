@@ -8,14 +8,12 @@ const (
 	DefaultFilePerm = 0600
 	Unix            = "unix"
 	Comment         = "#"
-
-	DockerHost  = "DOCKER_HOST"
-	From        = "FROM"
-	Colon       = ":"
-	Common      = "."
-	Dollar      = "@"
-	Slash       = "/"
-	Space       = " "
-	Library     = "library"
-	DockerProxy = "dockerproxy.com"
+	Equal           = "="
+	From            = "FROM"
+	Colon           = ":"
+	Common          = "."
+	Dollar          = "@"
+	Slash           = "/"
+	Space           = " "
+	Library         = "library"
 )

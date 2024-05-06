@@ -11,6 +11,7 @@ import (
 	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/dronestock/docker/internal/internal/key"
 	"github.com/goexl/args"
+	"github.com/goexl/gox"
 )
 
 type Build struct {
@@ -71,7 +72,13 @@ func (b *Build) run(ctx *context.Context, target *config.Target, err *error) {
 
 	// 多平台编译
 	if "" != target.Platform() {
-		arguments.Argument("platform", target.Platform())
+		arguments.Argument(constant.Platform, target.Platform())
+
+		platformArg := gox.StringBuilder(constant.Platform, constant.Equal, target.Platform()).String()
+		arguments.Argument(constant.BuildArg, platformArg)
+
+		platformArgUpper := gox.StringBuilder(strings.ToUpper(constant.Platform), constant.Equal, target.Platform()).String()
+		arguments.Argument(constant.BuildArg, platformArgUpper)
 	}
 
 	// 执行代码检查命令
