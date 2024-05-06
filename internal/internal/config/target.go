@@ -30,7 +30,7 @@ type Target struct {
 	// 操作系统
 	Os string `default:"${OS=linux}" json:"os,omitempty" validate:"omitempty,oneof=linux windows"`
 	// 架构
-	Arch string `default:"${ARCH}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 i386 arm32v7 arm64v8"`
+	Arch string `default:"${ARCH}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 i386 arm/v7 arm64"`
 
 	// 仓库
 	Registry *Registry `json:"registry,omitempty"`
