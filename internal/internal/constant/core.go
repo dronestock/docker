@@ -16,4 +16,6 @@ const (
 	Slash           = "/"
 	Space           = " "
 	Library         = "library"
+	Os              = "os"
+	Arch            = "arch"
 )

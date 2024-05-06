@@ -74,9 +74,18 @@ func (b *Build) run(ctx *context.Context, target *config.Target, err *error) {
 	if "" != target.Platform() {
 		arguments.Argument(constant.Platform, target.Platform())
 
+		osArg := gox.StringBuilder(constant.Os, constant.Equal, target.Os).String()
+		arguments.Argument(constant.BuildArg, osArg)
+		osArgUpper := gox.StringBuilder(strings.ToUpper(constant.Os), constant.Equal, target.Os).String()
+		arguments.Argument(constant.BuildArg, osArgUpper)
+
+		archArg := gox.StringBuilder(constant.Arch, constant.Equal, target.Arch).String()
+		arguments.Argument(constant.BuildArg, archArg)
+		archArgUpper := gox.StringBuilder(strings.ToUpper(constant.Arch), constant.Equal, target.Arch).String()
+		arguments.Argument(constant.BuildArg, archArgUpper)
+
 		platformArg := gox.StringBuilder(constant.Platform, constant.Equal, target.Platform()).String()
 		arguments.Argument(constant.BuildArg, platformArg)
-
 		platformArgUpper := gox.StringBuilder(strings.ToUpper(constant.Platform), constant.Equal, target.Platform()).String()
 		arguments.Argument(constant.BuildArg, platformArgUpper)
 	}
