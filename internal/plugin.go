@@ -46,7 +46,7 @@ func (p *plugin) Steps() drone.Steps {
 	return drone.Steps{
 		drone.NewStep(step.NewSSH(&p.Base, &p.Docker, p.Logger)).Name("授权").Build(),
 		drone.NewStep(step.NewBoost(&p.Base, p.Targets, &p.Boost, p.Logger)).Name("加速").Build(),
-		drone.NewStep(step.NewDaemon(p.docker, &p.Docker)).Name("守护").Build(),
+		// drone.NewStep(step.NewDaemon(p.docker, &p.Docker)).Name("守护").Build(),
 		drone.NewStep(step.NewLogin(p.docker, &p.Docker, p.Registries, p.Targets)).Name("登录").Build(),
 		drone.NewStep(step.NewSetup(p.docker, &p.Docker, &p.Targets)).Name("配置").Build(),
 		drone.NewStep(step.NewBuild(p.docker, &p.Docker, &p.Project, p.Targets)).Name("编译").Build(),

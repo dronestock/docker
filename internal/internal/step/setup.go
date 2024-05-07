@@ -2,9 +2,11 @@ package step
 
 import (
 	"context"
+	"strings"
 
 	"github.com/dronestock/docker/internal/internal/command"
 	"github.com/dronestock/docker/internal/internal/config"
+	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/goexl/args"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
@@ -67,12 +69,12 @@ func (s *Setup) binfmt(ctx *context.Context) (err error) {
 }
 
 func (s *Setup) driver(ctx *context.Context) (err error) {
-	if 1 <= len(*s.targets) { // 只有同时要打包多个平台才需要创建多平台编译驱动
+	platforms := s.targets.Platforms()
+	if 1 >= strings.Count(platforms, constant.Comma) { // 只有同时要打包多个平台才需要创建多平台编译驱动
 		return
 	}
 
 	name := xid.New().String()
-	platforms := s.targets.Platforms()
 	arguments := args.New().Build()
 	arguments.Subcommand("buildx")
 	arguments.Argument("name", name)
