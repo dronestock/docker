@@ -1,5 +1,11 @@
 package config
 
+import (
+	"strings"
+
+	"github.com/dronestock/docker/internal/internal/constant"
+)
+
 type Targets []*Target
 
 func (t *Targets) Runnable() (runnable bool) {
@@ -19,6 +25,18 @@ func (t *Targets) Registries() (registries Registries) {
 	registries = make(Registries, 0, len(*t))
 	for _, target := range *t {
 		registries = append(registries, target.AllRegistries()...)
+	}
+
+	return
+}
+
+func (t *Targets) Platforms() (platforms string) {
+	all := make([]string, 0, len(*t))
+	for _, target := range *t {
+		all = append(all, target.PlatformArgument())
+	}
+	if 0 != len(all) {
+		platforms = strings.Join(all, constant.Comma)
 	}
 
 	return

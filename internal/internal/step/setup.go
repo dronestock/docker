@@ -8,6 +8,7 @@ import (
 	"github.com/goexl/args"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
+	"github.com/rs/xid"
 )
 
 type Setup struct {
@@ -31,6 +32,8 @@ func (s *Setup) Runnable() bool {
 func (s *Setup) Run(ctx *context.Context) (err error) {
 	if qe := s.binfmt(ctx); nil != qe {
 		err = qe
+	} else if de := s.driver(ctx); nil != de {
+		err = de
 	}
 
 	return
@@ -58,6 +61,33 @@ func (s *Setup) binfmt(ctx *context.Context) (err error) {
 		s.command.Warn("安装Qemu环境失败", fields.Add(field.Error(err))...)
 	} else {
 		s.command.Info("安装Qemu环境成功", fields...)
+	}
+
+	return
+}
+
+func (s *Setup) driver(ctx *context.Context) (err error) {
+	if 1 <= len(*s.targets) { // 只有同时要打包多个平台才需要创建多平台编译驱动
+		return
+	}
+
+	name := xid.New().String()
+	platforms := s.targets.Platforms()
+	arguments := args.New().Build()
+	arguments.Subcommand("buildx")
+	arguments.Argument("name", name)
+	arguments.Flag("use")
+	arguments.Argument("platform", platforms)
+
+	fields := gox.Fields[any]{
+		field.New("name", name),
+		field.New("platform", platforms),
+	}
+	s.command.Info("准备创建多平台编译驱动", fields...)
+	if err = s.command.Exec(*ctx, arguments.Build()); nil != err {
+		s.command.Warn("创建多平台编译驱动失败", fields.Add(field.Error(err))...)
+	} else {
+		s.command.Info("创建多平台编译驱动成功", fields...)
 	}
 
 	return
