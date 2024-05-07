@@ -59,7 +59,7 @@ func (l *Login) login(ctx *context.Context, registry *config.Registry, err *erro
 	}
 	l.command.Info("准备登录镜像仓库", fields...)
 	mark := context.WithValue(*ctx, key.ContextMark, registry.Mark)
-	if le := l.command.Exec(mark, arguments.Build()); nil != le && registry.Required {
+	if le := l.command.Exec(mark, arguments.Build()); nil != le {
 		*err = le
 		l.command.Info("登录镜像仓库失败", fields.Add(field.Error(*err))...)
 	} else {

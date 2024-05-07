@@ -45,9 +45,10 @@ clone:
 
 environment:
   NAME: dockerd
-  OUTPUT_LINUX: docker.amd64.lin
-  OUTPUT_WINDOWS: docker.amd64.exe
-  OUTPUT_MAC: docker.amd64.mac
+  OUTPUT_LINUX_DIR: dist/linux
+  OUTPUT_LINUX_ARM_V7: arm/v7
+  OUTPUT_LINUX_ARM64: arm64
+  OUTPUT_LINUX_AMD64: amd64
   CHANGELOG_TAG_OUTPUT: CHANGELOG.tag.md
 
 
@@ -64,18 +65,15 @@ steps:
         path: /var/lib/go
     settings:
       outputs:
-        - name: $${NAME}
+        - name: $${OUTPUT_LINUX_DIR}/$${OUTPUT_LINUX_AMD64}/$${NAME}
           os: linux
           arch: amd64
-        - name: $${OUTPUT_LINUX}
+        - name: $${OUTPUT_LINUX_DIR}/$${OUTPUT_LINUX_ARM64}/$${NAME}
           os: linux
-          arch: amd64
-        - name: $${OUTPUT_WINDOWS}
-          os: windows
-          arch: amd64
-        - name: $${OUTPUT_MAC}
-          os: darwin
-          arch: amd64
+          arch: arm64
+        - name: $${OUTPUT_LINUX_DIR}/$${OUTPUT_LINUX_ARM}/$${NAME}
+          os: linux
+          arch: arm
 
   - name: 推包
     image: ccr.ccs.tencentyun.com/dronestock/docker
@@ -91,13 +89,16 @@ steps:
         from_secret: password_ccr
     settings:
       repository: dronestock/docker
+      platforms:
+        - arch: amd64
+        - arch: arm64
+        - arch: arm/v7
       registries:
         - username: dronestock
           password: $${PASSWORD_DOCKER}
         - hostname: ccr.ccs.tencentyun.com
           username: "160290688"
           password: $${PASSWORD_CCR}
-          required: true
 
   - name: 改变
     image: ccr.ccs.tencentyun.com/dronestock/changelog

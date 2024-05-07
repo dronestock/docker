@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -41,7 +42,7 @@ type Target struct {
 	tag string
 }
 
-func (t *Target) LocalTag() string {
+func (t *Target) Local() string {
 	if "" == t.tag {
 		t.tag = xid.New().String()
 	}
@@ -100,6 +101,75 @@ func (t *Target) Qemu() (qemu bool) {
 		if qemu {
 			break
 		}
+	}
+
+	return
+}
+
+func (t *Target) Tags(registries *Registries, docker *Docker) (tags []string) {
+	if t.Pushable(registries, docker) {
+		tags = t.tags(registries, docker)
+	} else {
+		tags = []string{xid.New().String()}
+	}
+
+	return
+}
+
+func (t *Target) Pushable(registries *Registries, docker *Docker) bool {
+	return 0 != len(*registries) && "" != docker.Repository && 1 < len(t.AllPlatforms())
+}
+
+func (t *Target) tags(registries *Registries, docker *Docker) (tags []string) {
+	autos := t.autos()
+	tags = make([]string, 0, (len(*registries)+len(t.AllRegistries()))*len(autos))
+	for _, auto := range autos {
+		final := gox.StringBuilder(t.Prefix)
+		if "" != auto {
+			final.Append(t.Middle)
+		}
+		final.Append(auto)
+		final.Append(t.Suffix)
+
+		remote := final.String()
+		for _, registry := range *registries {
+			tags = append(tags, t.name(registry, docker, remote))
+		}
+		for _, registry := range t.AllRegistries() {
+			tags = append(tags, t.name(registry, docker, remote))
+		}
+	}
+
+	return
+}
+
+func (t *Target) name(registry *Registry, docker *Docker, remote string) (name string) {
+	if registry.DockerHub() { // 缩短名字长度
+		name = fmt.Sprintf("%s:%s", docker.Repository, remote)
+	} else {
+		name = fmt.Sprintf("%s/%s:%s", registry.Hostname, docker.Repository, remote)
+	}
+
+	return
+}
+
+func (t *Target) autos() (tags map[string]string) {
+	tags = make(map[string]string, 3)
+	tags[t.Tag] = t.Tag
+	if !t.Auto {
+		return
+	}
+
+	autos := strings.Split(t.Tag, constant.Common)
+	for index := range autos {
+		tag := strings.Join(autos[0:index+1], constant.Common)
+		tags[tag] = tag
+	}
+
+	if "" != t.Prefix || "" != t.Suffix {
+		tags["latest"] = ""
+	} else {
+		tags["latest"] = "latest"
 	}
 
 	return

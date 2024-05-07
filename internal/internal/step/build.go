@@ -11,45 +11,63 @@ import (
 	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/dronestock/docker/internal/internal/key"
 	"github.com/goexl/args"
+	"github.com/goexl/gox"
+	"github.com/goexl/gox/field"
+	"github.com/goexl/guc"
 )
 
 type Build struct {
-	targets config.Targets
-	config  *config.Docker
-	project *config.Project
 	command *command.Docker
+	config  *config.Docker
+
+	targets    *config.Targets
+	project    *config.Project
+	registries *config.Registries
 }
 
-func NewBuild(command *command.Docker, config *config.Docker, project *config.Project, targets config.Targets) *Build {
+func NewBuild(
+	command *command.Docker, config *config.Docker,
+	targets *config.Targets, project *config.Project, registries *config.Registries,
+) *Build {
 	return &Build{
 		command: command,
 		config:  config,
-		project: project,
-		targets: targets,
+
+		project:    project,
+		targets:    targets,
+		registries: registries,
 	}
 }
 
 func (b *Build) Runnable() bool {
-	return 0 != len(b.targets)
+	return 0 != len(*b.targets)
 }
 
 func (b *Build) Run(ctx *context.Context) (err error) {
-	for _, target := range b.targets {
-		b.run(ctx, target, &err)
+	wg := new(guc.WaitGroup)
+	wg.Add(len(*b.targets))
+	for _, target := range *b.targets {
+		go b.run(ctx, target, wg, &err)
 	}
+	// 等待所有任务执行完成
+	wg.Wait()
 
 	return
 }
 
-func (b *Build) run(ctx *context.Context, target *config.Target, err *error) {
+func (b *Build) run(ctx *context.Context, target *config.Target, wg *guc.WaitGroup, err *error) {
+	defer wg.Done()
+
 	directory := target.Dir()
-	tag := target.LocalTag()
+	tags := target.Tags(b.registries, b.config)
 	arguments := args.New().Build()
 
-	arguments.Subcommand("build")
+	arguments.Subcommand("buildx", "build")
 	arguments.Argument("rm", "true")
 	arguments.Argument("file", target.Dockerfile)
-	arguments.Argument("tag", tag)
+	for _, tag := range tags {
+		arguments.Argument("tag", tag)
+	}
 
 	// 编译上下文
 	arguments.Add(directory)
@@ -66,17 +84,30 @@ func (b *Build) run(ctx *context.Context, target *config.Target, err *error) {
 	// 通过只添加一个复合标签来减少层
 	arguments.Argument("label", strings.Join(b.labels(target), constant.Space))
 
-	// 使用本地网络
-	arguments.Argument("network", "host")
-
 	// 多平台编译
 	if "" != target.PlatformArgument() {
 		arguments.Argument(constant.Platform, target.PlatformArgument())
 	}
 
-	// 执行代码检查命令
+	// 直接推送
+	pushable := target.Pushable(b.registries, b.config)
+	if pushable {
+		arguments.Flag("push")
+	}
+
+	fields := gox.Fields[any]{
+		field.New("tags", tags),
+		field.New("target", target),
+		field.New("push", pushable),
+	}
 	dir := context.WithValue(*ctx, key.ContextDir, directory)
-	*err = b.command.Exec(dir, arguments.Build())
+	b.command.Info("编译镜像开始", fields...)
+	if be := b.command.Exec(dir, arguments.Build()); nil != be {
+		*err = be
+		b.command.Warn("编译镜像出错", fields.Add(field.Error(be))...)
+	} else {
+		b.command.Info("编译镜像成功", fields...)
+	}
 }
 
 func (b *Build) labels(target *config.Target) (labels []string) {

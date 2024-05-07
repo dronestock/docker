@@ -70,16 +70,17 @@ func (s *Setup) binfmt(ctx *context.Context) (err error) {
 
 func (s *Setup) driver(ctx *context.Context) (err error) {
 	platforms := s.targets.Platforms()
-	if 1 >= strings.Count(platforms, constant.Comma) { // 只有同时要打包多个平台才需要创建多平台编译驱动
+	if !strings.Contains(platforms, constant.Comma) { // 只有同时要打包多个平台才需要创建多平台编译驱动
 		return
 	}
 
 	name := xid.New().String()
 	arguments := args.New().Build()
-	arguments.Subcommand("buildx")
+	arguments.Subcommand("buildx", "create")
 	arguments.Argument("name", name)
 	arguments.Flag("use")
 	arguments.Argument("platform", platforms)
+	arguments.Argument("driver", "docker-container")
 
 	fields := gox.Fields[any]{
 		field.New("name", name),
