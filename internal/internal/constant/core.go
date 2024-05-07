@@ -8,14 +8,12 @@ const (
 	DefaultFilePerm = 0600
 	Unix            = "unix"
 	Comment         = "#"
-	Equal           = "="
 	From            = "FROM"
 	Colon           = ":"
 	Common          = "."
+	Comma           = ","
 	Dollar          = "@"
 	Slash           = "/"
 	Space           = " "
 	Library         = "library"
-	Os              = "os"
-	Arch            = "arch"
 )

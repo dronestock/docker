@@ -11,7 +11,6 @@ import (
 	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/dronestock/docker/internal/internal/key"
 	"github.com/goexl/args"
-	"github.com/goexl/gox"
 )
 
 type Build struct {
@@ -71,33 +70,13 @@ func (b *Build) run(ctx *context.Context, target *config.Target, err *error) {
 	arguments.Argument("network", "host")
 
 	// 多平台编译
-	if "" != target.Platform() {
-		arguments.Argument(constant.Platform, target.Platform())
-
-		osArg := gox.StringBuilder(constant.Os, constant.Equal, target.Os).String()
-		arguments.Argument(constant.BuildArg, osArg)
-		osArgUpper := gox.StringBuilder(strings.ToUpper(constant.Os), constant.Equal, target.Os).String()
-		arguments.Argument(constant.BuildArg, osArgUpper)
-
-		archArg := gox.StringBuilder(constant.Arch, constant.Equal, target.Arch).String()
-		arguments.Argument(constant.BuildArg, archArg)
-		archArgUpper := gox.StringBuilder(strings.ToUpper(constant.Arch), constant.Equal, target.Arch).String()
-		arguments.Argument(constant.BuildArg, archArgUpper)
-
-		platformArg := gox.StringBuilder(constant.Platform, constant.Equal, target.Platform()).String()
-		arguments.Argument(constant.BuildArg, platformArg)
-		platformArgUpper := gox.StringBuilder(strings.ToUpper(constant.Platform), constant.Equal, target.Platform()).String()
-		arguments.Argument(constant.BuildArg, platformArgUpper)
+	if "" != target.PlatformArgument() {
+		arguments.Argument(constant.Platform, target.PlatformArgument())
 	}
 
 	// 执行代码检查命令
 	dir := context.WithValue(*ctx, key.ContextDir, directory)
-	if ee := b.command.Exec(dir, arguments.Build()); nil == ee {
-		// ! 清理打包好的镜像（垃圾文件，不清理会导致磁盘空间占用过大）
-		b.command.Remove(tag, fmt.Sprintf("删除镜像：%s", tag))
-	} else {
-		*err = ee
-	}
+	*err = b.command.Exec(dir, arguments.Build())
 }
 
 func (b *Build) labels(target *config.Target) (labels []string) {

@@ -26,10 +26,6 @@ func NewDocker(base *drone.Base, binary *config.Binary) *Docker {
 }
 
 func (d *Docker) Exec(ctx context.Context, arguments *args.Arguments) (err error) {
-	if d.Verbose {
-		arguments = arguments.Rebuild().Flag("debug").Option("log-level", "debug").Build()
-	}
-
 	command := d.Command(d.binary.Docker).Context(ctx)
 	command.Args(arguments)
 	// 检查是否要通过输出判断退出
@@ -77,9 +73,4 @@ func (d *Docker) Daemon(ctx *context.Context, arguments *args.Arguments, mark st
 	}
 
 	return
-}
-
-func (d *Docker) Remove(tag string, name string) {
-	arguments := args.New().Build().Subcommand("image", "rm", tag)
-	d.Cleanup().Command(d.binary.Docker).Arguments(arguments.Build()).Build().Name(name).Build()
 }

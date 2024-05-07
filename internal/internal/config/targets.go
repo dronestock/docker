@@ -23,3 +23,22 @@ func (t *Targets) Registries() (registries Registries) {
 
 	return
 }
+
+func (t *Targets) Binfmt(docker *Docker) (fmt bool) {
+	if "/var/run/docker.sock" == docker.Host {
+		fmt = t.qemu()
+	}
+
+	return
+}
+
+func (t *Targets) qemu() (qemu bool) {
+	for _, target := range *t {
+		qemu = target.Qemu()
+		if qemu {
+			break
+		}
+	}
+
+	return
+}

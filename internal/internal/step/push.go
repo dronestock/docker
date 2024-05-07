@@ -90,8 +90,6 @@ func (p *Push) push(
 	if te := p.command.Exec(*ctx, args.New().Build().Subcommand("tag").Add(local, image).Build()); nil != te {
 		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
 		image = local
-	} else { // ! 清理打包好的镜像（垃圾文件，不清理会导致磁盘空间占用过大）
-		p.command.Remove(remote, fmt.Sprintf("删除镜像：%s", remote))
 	}
 
 	pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(image).Build())
