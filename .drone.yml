@@ -71,7 +71,7 @@ steps:
         - name: $${OUTPUT_LINUX_DIR}/$${OUTPUT_LINUX_ARM64}/$${NAME}
           os: linux
           arch: arm64
-        - name: $${OUTPUT_LINUX_DIR}/$${OUTPUT_LINUX_ARM}/$${NAME}
+        - name: $${OUTPUT_LINUX_DIR}/$${OUTPUT_LINUX_ARM_V7}/$${NAME}
           os: linux
           arch: arm
 
