@@ -33,7 +33,7 @@ func NewLogin(
 }
 
 func (l *Login) Runnable() bool {
-	return 0 != len(*l.registries) || l.targets.Runnable(l.registries, l.config)
+	return 0 != len(*l.registries) || l.targets.Runnable()
 }
 
 func (l *Login) Run(ctx *context.Context) (err error) {
