@@ -74,6 +74,7 @@ steps:
         - name: $${OUTPUT_LINUX_DIR}/$${OUTPUT_LINUX_ARM_V7}/$${NAME}
           os: linux
           arch: arm
+          arm: 7
 
   - name: 推包
     image: ccr.ccs.tencentyun.com/dronestock/docker
