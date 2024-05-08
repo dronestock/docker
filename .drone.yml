@@ -93,7 +93,8 @@ steps:
       platforms:
         - arch: amd64
         - arch: arm64
-        - arch: arm/v7
+        - arch: arm
+          variant: v7
       registries:
         - username: dronestock
           password: $${PASSWORD_DOCKER}
