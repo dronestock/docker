@@ -16,7 +16,7 @@ type Registry struct {
 	// 登录成功标志
 	Mark string `default:"Login Succeeded" json:"mark,omitempty"`
 
-	Name string `default:"未设置"`
+	Name string `default:"未设置" json:"name,omitempty"`
 }
 
 func (r *Registry) Nickname() (nickname string) {

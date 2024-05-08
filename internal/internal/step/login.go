@@ -12,31 +12,33 @@ import (
 )
 
 type Login struct {
-	command    *command.Docker
-	config     *config.Docker
-	registries config.Registries
-	targets    config.Targets
+	command *command.Docker
+	config  *config.Docker
+
+	registries *config.Registries
+	targets    *config.Targets
 }
 
 func NewLogin(
 	command *command.Docker, config *config.Docker,
-	registries config.Registries, targets config.Targets,
+	registries *config.Registries, targets *config.Targets,
 ) *Login {
 	return &Login{
-		command:    command,
-		config:     config,
+		command: command,
+		config:  config,
+
 		registries: registries,
 		targets:    targets,
 	}
 }
 
 func (l *Login) Runnable() bool {
-	return 0 != len(l.registries) || l.targets.Runnable()
+	return 0 != len(*l.registries) || l.targets.Runnable(l.registries, l.config)
 }
 
 func (l *Login) Run(ctx *context.Context) (err error) {
-	registries := make(config.Registries, 0, len(l.registries)+len(l.targets.Registries()))
-	registries = append(registries, l.registries...)
+	registries := make(config.Registries, 0, len(*l.registries)+len(l.targets.Registries()))
+	registries = append(registries, *l.registries...)
 	registries = append(registries, l.targets.Registries()...)
 	for _, registry := range registries {
 		l.login(ctx, registry, &err)

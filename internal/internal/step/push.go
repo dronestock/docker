@@ -33,7 +33,7 @@ func NewPush(
 }
 
 func (p *Push) Runnable() bool {
-	return 0 != len(*p.registries) || p.targets.Runnable()
+	return p.targets.Runnable(p.registries, p.config)
 }
 
 func (p *Push) Run(ctx *context.Context) (err error) {

@@ -117,6 +117,10 @@ func (t *Target) Tags(registries *Registries, docker *Docker) (tags []string) {
 }
 
 func (t *Target) Pushable(registries *Registries, docker *Docker) bool {
+	return (nil != t.Registry || 0 != len(*registries)) && "" != docker.Repository && 1 >= len(t.AllPlatforms())
+}
+
+func (t *Target) PushWithBuild(registries *Registries, docker *Docker) bool {
 	return 0 != len(*registries) && "" != docker.Repository && 1 < len(t.AllPlatforms())
 }
 
