@@ -8,9 +8,9 @@ import (
 
 type Targets []*Target
 
-func (t *Targets) Runnable(registries *Registries, docker *Docker) (runnable bool) {
+func (t *Targets) Runnable() (runnable bool) {
 	for _, target := range *t {
-		if target.Pushable(registries, docker) {
+		if nil != target.Registry || 0 != len(target.Registries) {
 			runnable = true
 		}
 		if runnable {

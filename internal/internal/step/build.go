@@ -90,7 +90,7 @@ func (b *Build) run(ctx *context.Context, target *config.Target, wg *guc.WaitGro
 	}
 
 	// 直接推送
-	pushable := target.PushWithBuild(b.registries, b.config)
+	pushable := target.Pushable(b.registries, b.config)
 	if pushable {
 		arguments.Flag("push")
 	}
