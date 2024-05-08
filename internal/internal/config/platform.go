@@ -13,7 +13,8 @@ type Platform struct {
 	// 架构
 	Arch string `default:"${ARCH}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 i386 arm arm64"`
 	// 变体
-	Variant string `default:"${VARIANT}" json:"variant,omitempty" validate:"required_if=Arch arm,oneof=v5 v6 v7"`
+	// nolint:lll
+	Variant string `default:"${VARIANT}" json:"variant,omitempty" validate:"omitempty,required_if=Arch arm,oneof=v5 v6 v7"`
 }
 
 func (p *Platform) Argument() string {
@@ -22,7 +23,7 @@ func (p *Platform) Argument() string {
 		builder.Append(p.Os).Append(constant.Slash).Append(p.Arch)
 	}
 	if "" != p.Os && "" != p.Arch && "" != p.Variant {
-		builder.Append(p.Variant)
+		builder.Append(constant.Slash).Append(p.Variant)
 	}
 
 	return builder.String()
