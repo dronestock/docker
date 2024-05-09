@@ -60,7 +60,7 @@ func (b *Build) run(ctx *context.Context, target *config.Target, wg *guc.WaitGro
 
 	pushable := target.BuildWithPush(b.registries, b.config)
 	directory := target.Dir()
-	tags := b.tags(target, b.registries, b.config)
+	tags := target.Tags(b.registries, b.config)
 	arguments := args.New().Build()
 
 	arguments.Subcommand("buildx", "build")
@@ -127,14 +127,4 @@ func (b *Build) labels(target *config.Target) (labels []string) {
 
 func (b *Build) squash() bool {
 	return b.config.Experimental && b.config.Squash
-}
-
-func (b *Build) tags(target *config.Target, registries *config.Registries, docker *config.Docker) (tags []string) {
-	if target.BuildWithPush(registries, docker) {
-		tags = target.Tags(registries, docker)
-	} else {
-		tags = []string{target.Local()}
-	}
-
-	return
 }

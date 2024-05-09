@@ -7,7 +7,6 @@ import (
 
 	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/goexl/gox"
-	"github.com/rs/xid"
 )
 
 type Target struct {
@@ -38,16 +37,6 @@ type Target struct {
 	Registry *Registry `json:"registry,omitempty"`
 	// 仓库列表
 	Registries []*Registry `json:"registries,omitempty"`
-
-	tag string
-}
-
-func (t *Target) Local() string {
-	if "" == t.tag {
-		t.tag = xid.New().String()
-	}
-
-	return t.tag
 }
 
 func (t *Target) AllRegistries() (registries []*Registry) {

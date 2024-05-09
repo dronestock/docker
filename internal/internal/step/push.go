@@ -55,23 +55,20 @@ func (p *Push) run(ctx *context.Context, target *config.Target, err *error) {
 	wg.Wait()
 }
 
-func (p *Push) push(ctx *context.Context, target *config.Target, image string, wg *guc.WaitGroup, err *error) {
+func (p *Push) push(ctx *context.Context, target *config.Target, tag string, wg *guc.WaitGroup, err *error) {
 	// 任何情况下，都必须调用完成方法
 	defer wg.Done()
 
-	local := target.Local()
 	if 2 <= len(target.AllPlatforms()) {
 		return
 	}
 
 	fields := gox.Fields[any]{
 		field.New("repository", p.config.Repository),
-		field.New("image", image),
-		field.New("local", local),
+		field.New("tag", tag),
+		field.New("target", target),
 	}
-	if te := p.command.Exec(*ctx, args.New().Build().Subcommand("tag").Add(local, image).Build()); nil != te {
-		*err = te
-	} else if pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(image).Build()); nil != pe {
+	if pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(tag).Build()); nil != pe {
 		*err = pe
 		p.command.Info("推送镜像失败", fields.Add(field.Error(*err))...)
 	} else {
