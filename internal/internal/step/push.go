@@ -47,7 +47,7 @@ func (p *Push) Run(ctx *context.Context) (err error) {
 func (p *Push) run(ctx *context.Context, target *config.Target, err *error) {
 	tags := target.Tags(p.registries, p.config)
 	wg := new(guc.WaitGroup)
-	wg.Add((len(*p.registries) + len(target.AllRegistries())) * len(tags))
+	wg.Add(len(tags))
 	for _, tag := range tags {
 		go p.push(ctx, target, tag, wg, err)
 	}
