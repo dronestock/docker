@@ -31,7 +31,8 @@ type plugin struct {
 	// 仓库列表
 	Registries config.Registries `default:"${REGISTRIES}" json:"registries,omitempty"`
 
-	docker *command.Docker
+	docker  *command.Docker
+	targets *config.Targets
 }
 
 func New() drone.Plugin {
@@ -47,19 +48,21 @@ func (p *plugin) Steps() drone.Steps {
 		drone.NewStep(step.NewSSH(&p.Base, &p.Docker, p.Logger)).Name("授权").Build(),
 		drone.NewStep(step.NewBoost(&p.Base, p.Targets, &p.Boost, p.Logger)).Name("加速").Build(),
 		drone.NewStep(step.NewDaemon(p.docker, &p.Docker)).Name("守护").Build(),
-		drone.NewStep(step.NewLogin(p.docker, &p.Docker, &p.Registries, &p.Targets)).Name("登录").Build(),
-		drone.NewStep(step.NewSetup(p.docker, &p.Docker, &p.Targets)).Name("配置").Build(),
-		drone.NewStep(step.NewBuild(p.docker, &p.Docker, &p.Targets, &p.Project, &p.Registries)).Name("编译").Build(),
-		drone.NewStep(step.NewPush(p.docker, &p.Docker, &p.Targets, &p.Registries)).Name("推送").Build(),
+		drone.NewStep(step.NewLogin(p.docker, &p.Docker, &p.Registries, p.targets)).Name("登录").Build(),
+		drone.NewStep(step.NewSetup(p.docker, &p.Docker, p.targets)).Name("配置").Build(),
+		drone.NewStep(step.NewBuild(p.docker, &p.Docker, p.targets, &p.Project, &p.Registries)).Name("编译").Build(),
+		drone.NewStep(step.NewPush(p.docker, &p.Docker, p.targets, &p.Registries)).Name("推送").Build(),
 	}
 }
 
 func (p *plugin) Setup() (err error) {
-	p.Targets = append(p.Targets, &p.Target)
-	if nil != p.Registry {
+	if nil != p.Registry { // 合并仓库
 		p.Registries = append(p.Registries, p.Registry)
 	}
+	// 创建执行封装命令
 	p.docker = command.NewDocker(&p.Base, &p.Binary)
+	// 合并平台和目标
+	p.combineTargets()
 
 	return
 }
@@ -72,4 +75,24 @@ func (p *plugin) Fields() gox.Fields[any] {
 		field.New("project", p.Project),
 		field.New("binary", p.Binary),
 	}
+}
+
+func (p *plugin) combineTargets() {
+	p.Targets = append(p.Targets, &p.Target)
+	tagCache := make(map[string]*config.Target)
+	for _, target := range p.Targets {
+		tag := target.Tag
+		if cached, ok := tagCache[tag]; ok {
+			cached.Platforms = append(cached.Platforms, &target.Platform)
+			cached.Platforms = append(cached.Platforms, target.Platforms...)
+		} else {
+			tagCache[tag] = target
+		}
+	}
+
+	targets := make(config.Targets, 0, len(tagCache))
+	for _, target := range tagCache {
+		targets = append(targets, target)
+	}
+	p.targets = &targets
 }
