@@ -90,7 +90,7 @@ steps:
         from_secret: password_ccr
     settings:
       repository: dronestock/docker
-      targets:
+      platforms:
         - arch: amd64
         - arch: arm64
         - arch: arm
