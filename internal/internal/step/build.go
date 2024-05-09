@@ -58,8 +58,9 @@ func (b *Build) Run(ctx *context.Context) (err error) {
 func (b *Build) run(ctx *context.Context, target *config.Target, wg *guc.WaitGroup, err *error) {
 	defer wg.Done()
 
+	pushable := target.BuildWithPush(b.registries, b.config)
 	directory := target.Dir()
-	tags := target.Tags(b.registries, b.config)
+	tags := b.tags(target, b.registries, b.config)
 	arguments := args.New().Build()
 
 	arguments.Subcommand("buildx", "build")
@@ -90,9 +91,10 @@ func (b *Build) run(ctx *context.Context, target *config.Target, wg *guc.WaitGro
 	}
 
 	// 直接推送
-	pushable := target.Pushable(b.registries, b.config)
 	if pushable {
 		arguments.Flag("push")
+	} else {
+		arguments.Argument("output", "type=image")
 	}
 
 	fields := gox.Fields[any]{
@@ -125,4 +127,14 @@ func (b *Build) labels(target *config.Target) (labels []string) {
 
 func (b *Build) squash() bool {
 	return b.config.Experimental && b.config.Squash
+}
+
+func (b *Build) tags(target *config.Target, registries *config.Registries, docker *config.Docker) (tags []string) {
+	if target.BuildWithPush(registries, docker) {
+		tags = target.Tags(registries, docker)
+	} else {
+		tags = []string{target.Local()}
+	}
+
+	return
 }

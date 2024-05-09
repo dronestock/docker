@@ -11,6 +11,8 @@ import (
 )
 
 type Target struct {
+	Platform `default:"${PLATFORM}"` // 平台
+
 	// 配置文件
 	Dockerfile string `default:"${DOCKERFILE=Dockerfile}" json:"dockerfile,omitempty" validate:"required"`
 	// 上下文
@@ -29,8 +31,6 @@ type Target struct {
 	// 名称
 	Name string `default:"${NAME=${DRONE_COMMIT_SHA=latest}}" json:"name,omitempty"`
 
-	// 平台
-	Platform Platform `default:"${PLATFORM}" json:"platform,omitempty"`
 	// 平台列表
 	Platforms Platforms `default:"${PLATFORMS}" json:"platforms,omitempty"`
 
@@ -106,21 +106,11 @@ func (t *Target) Qemu() (qemu bool) {
 	return
 }
 
-func (t *Target) Tags(registries *Registries, docker *Docker) (tags []string) {
-	if t.Pushable(registries, docker) {
-		tags = t.tags(registries, docker)
-	} else {
-		tags = []string{xid.New().String()}
-	}
-
-	return
-}
-
-func (t *Target) Pushable(registries *Registries, docker *Docker) bool {
+func (t *Target) BuildWithPush(registries *Registries, docker *Docker) bool {
 	return 0 != len(*registries) && "" != docker.Repository && 1 < len(t.AllPlatforms())
 }
 
-func (t *Target) tags(registries *Registries, docker *Docker) (tags []string) {
+func (t *Target) Tags(registries *Registries, docker *Docker) (tags []string) {
 	autos := t.autos()
 	tags = make([]string, 0, (len(*registries)+len(t.AllRegistries()))*len(autos))
 	for _, auto := range autos {

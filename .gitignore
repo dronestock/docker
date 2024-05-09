@@ -5,6 +5,8 @@
 *.so
 *.dylib
 dist/
+# 可执行文件
+dockerd*
 
 # 测试文件
 *.test

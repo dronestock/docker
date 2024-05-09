@@ -2,11 +2,9 @@ package step
 
 import (
 	"context"
-	"strings"
 
 	"github.com/dronestock/docker/internal/internal/command"
 	"github.com/dronestock/docker/internal/internal/config"
-	"github.com/dronestock/docker/internal/internal/constant"
 	"github.com/goexl/args"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
@@ -28,7 +26,7 @@ func NewSetup(command *command.Docker, config *config.Docker, targets *config.Ta
 }
 
 func (s *Setup) Runnable() bool {
-	return true
+	return s.targets.BinfmtNeedSetup(s.config) || s.targets.DriverNeedSetup()
 }
 
 func (s *Setup) Run(ctx *context.Context) (err error) {
@@ -42,7 +40,7 @@ func (s *Setup) Run(ctx *context.Context) (err error) {
 }
 
 func (s *Setup) binfmt(ctx *context.Context) (err error) {
-	if !s.targets.Binfmt(s.config) {
+	if !s.targets.BinfmtNeedSetup(s.config) {
 		return
 	}
 
@@ -69,11 +67,11 @@ func (s *Setup) binfmt(ctx *context.Context) (err error) {
 }
 
 func (s *Setup) driver(ctx *context.Context) (err error) {
-	platforms := s.targets.Platforms()
-	if !strings.Contains(platforms, constant.Comma) { // 只有同时要打包多个平台才需要创建多平台编译驱动
+	if !s.targets.DriverNeedSetup() {
 		return
 	}
 
+	platforms := s.targets.Platforms()
 	name := xid.New().String()
 	arguments := args.New().Build()
 	arguments.Subcommand("buildx", "create")

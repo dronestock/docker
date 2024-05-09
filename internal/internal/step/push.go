@@ -33,7 +33,7 @@ func NewPush(
 }
 
 func (p *Push) Runnable() bool {
-	return p.targets.Runnable()
+	return p.targets.Runnable(p.registries, p.config)
 }
 
 func (p *Push) Run(ctx *context.Context) (err error) {
@@ -48,7 +48,7 @@ func (p *Push) run(ctx *context.Context, target *config.Target, err *error) {
 	tags := target.Tags(p.registries, p.config)
 	wg := new(guc.WaitGroup)
 	wg.Add((len(*p.registries) + len(target.AllRegistries())) * len(tags))
-	for _, tag := range target.Tags(p.registries, p.config) {
+	for _, tag := range tags {
 		go p.push(ctx, target, tag, wg, err)
 	}
 	// 等待所有任务执行完成
@@ -70,11 +70,8 @@ func (p *Push) push(ctx *context.Context, target *config.Target, image string, w
 		field.New("local", local),
 	}
 	if te := p.command.Exec(*ctx, args.New().Build().Subcommand("tag").Add(local, image).Build()); nil != te {
-		// 如果命令失败，退化成推送已经打好的镜像，不指定仓库
-		image = local
-	}
-
-	if pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(image).Build()); nil != pe {
+		*err = te
+	} else if pe := p.command.Exec(*ctx, args.New().Build().Subcommand("push").Add(image).Build()); nil != pe {
 		*err = pe
 		p.command.Info("推送镜像失败", fields.Add(field.Error(*err))...)
 	} else {
