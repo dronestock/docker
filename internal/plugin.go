@@ -79,19 +79,19 @@ func (p *plugin) Fields() gox.Fields[any] {
 
 func (p *plugin) combineTargets() {
 	p.Targets = append(p.Targets, &p.Target)
-	tagCache := make(map[string]*config.Target)
+	cache := make(map[string]*config.Target)
 	for _, target := range p.Targets {
 		tag := target.Tag
-		if cached, ok := tagCache[tag]; ok {
+		if cached, ok := cache[tag]; ok {
 			cached.Platforms = append(cached.Platforms, &target.Platform)
 			cached.Platforms = append(cached.Platforms, target.Platforms...)
 		} else {
-			tagCache[tag] = target
+			cache[tag] = target
 		}
 	}
 
-	targets := make(config.Targets, 0, len(tagCache))
-	for _, target := range tagCache {
+	targets := make(config.Targets, 0, len(cache))
+	for _, target := range cache {
 		targets = append(targets, target)
 	}
 	p.targets = &targets

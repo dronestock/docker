@@ -11,7 +11,7 @@ type Platform struct {
 	// 操作系统
 	Os string `default:"${OS=linux}" json:"os,omitempty" validate:"omitempty,oneof=linux windows"`
 	// 架构
-	Arch string `default:"${ARCH}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 i386 arm arm64"`
+	Arch string `default:"${ARCH=amd64}" json:"arch,omitempty" validate:"omitempty,oneof=amd64 i386 arm arm64"`
 	// 变体
 	// nolint:lll
 	Variant string `default:"${VARIANT}" json:"variant,omitempty" validate:"omitempty,required_if=Arch arm,oneof=v5 v6 v7"`
