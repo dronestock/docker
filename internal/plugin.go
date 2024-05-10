@@ -61,8 +61,6 @@ func (p *plugin) Setup() (err error) {
 	}
 	// 创建执行封装命令
 	p.docker = command.NewDocker(&p.Base, &p.Binary)
-	// 合并平台和目标
-	p.combineTargets()
 
 	return
 }
@@ -77,7 +75,7 @@ func (p *plugin) Fields() gox.Fields[any] {
 	}
 }
 
-func (p *plugin) combineTargets() {
+func (p *plugin) Before() (err error) {
 	p.Targets = append(p.Targets, &p.Target)
 	cache := make(map[string]*config.Target)
 	for _, target := range p.Targets {
@@ -95,4 +93,6 @@ func (p *plugin) combineTargets() {
 		targets = append(targets, target)
 	}
 	p.targets = &targets
+
+	return
 }
