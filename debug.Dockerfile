@@ -1,11 +1,11 @@
-FROM ccr.ccs.tencentyun.com/storezhang/alpine:3.19.1 AS builder
+FROM ccr.ccs.tencentyun.com/storezhang/alpine:3.20.0 AS builder
 
 # 复制脚本
 COPY docker /docker
 
 
 
-FROM ccr.ccs.tencentyun.com/storezhang/alpine:3.19.1
+FROM ccr.ccs.tencentyun.com/storezhang/alpine:3.20.0
 
 
 LABEL author="storezhang<华寅>" \
