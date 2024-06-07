@@ -8,6 +8,12 @@ Drone持续集成Docker插件
 - 默认镜像
 - 自动重试
 - 重试背压
+- 多仓库
+- 多平台
+  - `ARM64`
+  - `ARM`
+  - `AMD64`
+  - 其它
 
 ## 使用
 
@@ -20,12 +26,8 @@ steps:
     settings:
       repository: dronestock/docker
       registries:
-        - username: dronestock
-          password: password_docker
-        - hostname: ccr.ccs.tencentyun.com
-          username: "160290688"
-          password: password_ccr
-          required: true
+        username: dronestock
+        password: password_docker
 ```
 
 更多使用教程，请参考[使用文档](https://www.dronestock.tech/plugin/stock/docker)
