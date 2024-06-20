@@ -84,7 +84,7 @@ func (b *Boost) process(_ *context.Context, target *config.Target, original *os.
 		field.New("filename", target.Dockerfile),
 	}
 	// 写入新文件
-	if we := os.WriteFile(target.Dockerfile, []byte(content.String()), os.ModePerm); nil != we {
+	if we := os.WriteFile(target.Dockerfile, []byte(content.String()), constant.FilePerm); nil != we {
 		err = we
 		b.logger.Warn("写入新的Dockerfile出错", fields.Add(field.Error(we))...)
 	} else {
