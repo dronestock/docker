@@ -27,9 +27,13 @@ func NewDaemon(command *command.Docker, config *config.Docker) *Daemon {
 		config:  config,
 
 		defaultMirrors: []string{
-			"https://hub.20240220.xyz",                // !高兴
-			"https://do.nark.eu.org",                   // !青柠
-			"https://hub.uuuadc.top",                   // !暂时只有这个可用
+			"https://hub.uuuadc.top",
+			"https://docker.anyhub.us.kg",
+			"https://dockerhub.jobcher.com",
+			"https://dockerhub.icu",
+			"https://docker.ckyl.me",
+			"https://docker.awsl9527.cn",
+			"https://hub.20240220.xyz",
 			"https://docker.nju.edu.cn",                // 南京大学镜像站
 			"https://docker.m.daocloud.io",             // DaoCloud镜像站
 			"https://mirror.iscas.ac.cn",               // 中科院软件所镜像站
