@@ -34,11 +34,6 @@ func NewDaemon(command *command.Docker, config *config.Docker) *Daemon {
 			"https://docker.ckyl.me",
 			"https://docker.awsl9527.cn",
 			"https://hub.20240220.xyz",
-			"https://docker.nju.edu.cn",                // 南京大学镜像站
-			"https://docker.m.daocloud.io",             // DaoCloud镜像站
-			"https://mirror.iscas.ac.cn",               // 中科院软件所镜像站
-			"https://docker.mirrors.sjtug.sjtu.edu.cn", // 上海交大镜像站
-			"https://mirror.baidubce.com",              // 百度云
 		},
 	}
 }
