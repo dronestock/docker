@@ -78,13 +78,16 @@ func (d *Daemon) startup(ctx *context.Context) (err error) {
 	if "" != d.config.Driver {
 		arguments.Argument("storage-driver", d.config.Driver)
 	}
+	// 镜像加速
+	for _, mirror := range d.mirrors() {
+		arguments.Argument("registry-mirror", mirror)
+	}
+
 	// 启用实验性功能
 	if d.config.Experimental {
 		arguments.Flag("experimental")
 	}
 
-	// 镜像加速
-	arguments.Argument("registry-mirror", strings.Join(d.mirrors(), constant.Comma))
 	// 使用阿里域名解析
 	arguments.Argument("dns", "223.5.5.5")
 	// 启动后台进程
