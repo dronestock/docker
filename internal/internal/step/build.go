@@ -80,6 +80,8 @@ func (b *Build) run(ctx *context.Context, target *config.Target, wg *guc.WaitGro
 	if b.config.Compress {
 		arguments.Flag("compress")
 	}
+	// 使用本地网络
+	arguments.Argument("network", "host")
 
 	// 添加标签
 	// 通过只添加一个复合标签来减少层
