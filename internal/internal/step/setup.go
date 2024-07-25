@@ -79,6 +79,7 @@ func (s *Setup) driver(ctx *context.Context) (err error) {
 	arguments.Flag("use")
 	arguments.Argument("platform", platforms)
 	arguments.Argument("driver", "docker-container")
+	arguments.Argument("driver-opt", "network=host")
 
 	fields := gox.Fields[any]{
 		field.New("name", name),
