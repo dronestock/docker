@@ -46,18 +46,17 @@ func (p *Push) Run(ctx *context.Context) (err error) {
 
 func (p *Push) run(ctx *context.Context, target *config.Target, err *error) {
 	tags := target.Tags(p.registries, p.config)
-	wg := new(guc.WaitGroup)
-	wg.Add(len(tags))
+	waiter := guc.New().Wait().Group(len(tags))
 	for _, tag := range tags {
-		go p.push(ctx, target, tag, wg, err)
+		go p.push(ctx, target, tag, waiter, err)
 	}
 	// 等待所有任务执行完成
-	wg.Wait()
+	waiter.Wait()
 }
 
-func (p *Push) push(ctx *context.Context, target *config.Target, tag string, wg *guc.WaitGroup, err *error) {
+func (p *Push) push(ctx *context.Context, target *config.Target, tag string, waiter guc.Waiter, err *error) {
 	// 任何情况下，都必须调用完成方法
-	defer wg.Done()
+	defer waiter.Done()
 
 	if 2 <= len(target.AllPlatforms()) {
 		return

@@ -50,11 +50,18 @@ func (t *Target) AllRegistries() (registries []*Registry) {
 }
 
 func (t *Target) AllPlatforms() (platforms Platforms) {
-	platforms = make(Platforms, 0, len(t.Platforms)+1)
+	duplicated := make(map[string]*Platform, len(t.Platforms)+1)
 	if "" != t.Platform.Argument() {
-		platforms = append(platforms, &t.Platform)
+		duplicated[t.Platform.Argument()] = &t.Platform
 	}
-	platforms = append(platforms, t.Platforms...)
+	for _, platform := range t.Platforms {
+		duplicated[platform.Argument()] = platform
+	}
+
+	platforms = make(Platforms, 0, len(duplicated))
+	for _, platform := range duplicated {
+		platforms = append(platforms, platform)
+	}
 
 	return
 }

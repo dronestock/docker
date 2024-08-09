@@ -80,7 +80,6 @@ func (s *Setup) driver(ctx *context.Context) (err error) {
 	arguments.Argument("platform", platforms)
 	arguments.Argument("driver", "docker-container")
 	arguments.Argument("driver-opt", "network=host")
-	arguments.Argument("buildkitd-flags", "'--allow-insecure-entitlement network.host'")
 
 	fields := gox.Fields[any]{
 		field.New("name", name),

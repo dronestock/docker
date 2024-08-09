@@ -52,7 +52,7 @@ func (l *Login) login(ctx *context.Context, registry *config.Registry, err *erro
 	arguments.Subcommand("login")
 	arguments.Argument("username", registry.Username)
 	arguments.Argument("password", registry.Password)
-	arguments.Add(registry.Hostname)
+	arguments.Subcommand(registry.Hostname)
 
 	fields := gox.Fields[any]{
 		field.New("registry", registry.Hostname),

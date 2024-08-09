@@ -44,19 +44,18 @@ func (b *Build) Runnable() bool {
 }
 
 func (b *Build) Run(ctx *context.Context) (err error) {
-	wg := new(guc.WaitGroup)
-	wg.Add(len(*b.targets))
+	waiter := guc.New().Wait().Group(len(*b.targets))
 	for _, target := range *b.targets {
-		go b.run(ctx, target, wg, &err)
+		go b.run(ctx, target, waiter, &err)
 	}
 	// 等待所有任务执行完成
-	wg.Wait()
+	waiter.Wait()
 
 	return
 }
 
-func (b *Build) run(ctx *context.Context, target *config.Target, wg *guc.WaitGroup, err *error) {
-	defer wg.Done()
+func (b *Build) run(ctx *context.Context, target *config.Target, waiter guc.Waiter, err *error) {
+	defer waiter.Done()
 
 	pushable := target.BuildWithPush(b.registries, b.config)
 	directory := target.Dir()

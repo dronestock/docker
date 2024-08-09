@@ -27,10 +27,10 @@ func NewDocker(base *drone.Base, binary *config.Binary) *Docker {
 
 func (d *Docker) Exec(ctx context.Context, arguments *args.Arguments) (err error) {
 	command := d.Command(d.binary.Docker).Context(ctx)
-	command.Args(arguments)
+	command.Arguments(arguments)
 	// 检查是否要通过输出判断退出
 	if mark := ctx.Value(key.ContextMark); nil != mark {
-		command.Async().Checker().Contains(mark.(string))
+		command.Async().Check().Contains(mark.(string)).Build()
 	}
 	// 确定运行上下文
 	if dir := ctx.Value(key.ContextDir); nil != dir {
@@ -57,9 +57,9 @@ func (d *Docker) Daemon(ctx *context.Context, arguments *args.Arguments, mark st
 	}
 
 	command := d.Command(d.binary.Daemon).Context(*ctx).Async()
-	command.Args(arguments)
+	command.Arguments(arguments)
 	// 检查是否完成
-	command.Checker().Contains(mark)
+	command.Check().Contains(mark).Build()
 
 	fields := gox.Fields[any]{
 		field.New("binary", d.binary.Daemon),
