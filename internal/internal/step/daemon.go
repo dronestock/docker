@@ -27,6 +27,7 @@ func NewDaemon(command *command.Docker, config *config.Docker) *Daemon {
 		config:  config,
 
 		defaultMirrors: []string{
+			"https://jockerhub.com",
 			"https://hub.uuuadc.top",
 			"https://docker.anyhub.us.kg",
 			"https://dockerhub.jobcher.com",
