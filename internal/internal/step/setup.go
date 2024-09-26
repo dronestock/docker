@@ -2,14 +2,22 @@ package step
 
 import (
 	"context"
+	_ "embed"
+	"encoding/json"
 
 	"github.com/dronestock/docker/internal/internal/command"
 	"github.com/dronestock/docker/internal/internal/config"
+	"github.com/dronestock/docker/internal/internal/step/internal/data"
 	"github.com/goexl/args"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
+	"github.com/goexl/gox/template"
+	"github.com/goexl/log"
 	"github.com/rs/xid"
 )
+
+//go:embed internal/template/buildkitd.toml.gohtml
+var kitTemplate string
 
 type Setup struct {
 	command *command.Docker
@@ -86,10 +94,31 @@ func (s *Setup) driver(ctx *context.Context) (err error) {
 		field.New("platform", platforms),
 	}
 	s.command.Info("准备创建多平台编译驱动", fields...)
-	if err = s.command.Exec(*ctx, arguments.Build()); nil != err {
+	if wce := s.writeConfig(ctx, arguments.Build()); nil != wce {
+		err = wce
+	} else if ee := s.command.Exec(*ctx, arguments.Build()); nil != ee {
+		err = ee
 		s.command.Warn("创建多平台编译驱动失败", fields.Add(field.Error(err))...)
 	} else {
 		s.command.Info("创建多平台编译驱动成功", fields...)
+	}
+
+	return
+}
+
+func (s *Setup) writeConfig(_ *context.Context, arguments *args.Arguments) (err error) {
+	kit := new(data.Buildkitd)
+	kit.Debug = s.command.Enabled(log.LevelDebug)
+
+	path := "buildkitd.toml"
+	if bytes, me := json.Marshal(s.command.Mirrors()); nil != me {
+		err = me
+	} else {
+		kit.Mirrors = string(bytes)
+		err = template.New(kitTemplate).Data(kit).Build().ToFile(path)
+	}
+	if nil == err {
+		arguments.Rebuild().Argument("config", path)
 	}
 
 	return

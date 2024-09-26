@@ -1,0 +1,6 @@
+{{- if .Debug -}}debug = true{{- end -}}
+
+{{- if .Mirrors }}
+[registry."docker.io"]
+    mirrors = {{ .Mirrors }}
+{{- end -}}

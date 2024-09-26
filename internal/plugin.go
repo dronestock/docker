@@ -60,7 +60,7 @@ func (p *plugin) Setup() (err error) {
 		p.Registries = append(p.Registries, p.Registry)
 	}
 	// 创建执行封装命令
-	p.docker = command.NewDocker(&p.Base, &p.Binary)
+	p.docker = command.NewDocker(&p.Base, &p.Binary, &p.Docker)
 
 	return
 }

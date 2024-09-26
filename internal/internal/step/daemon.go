@@ -17,25 +17,12 @@ import (
 type Daemon struct {
 	config  *config.Docker
 	command *command.Docker
-
-	defaultMirrors []string
 }
 
 func NewDaemon(command *command.Docker, config *config.Docker) *Daemon {
 	return &Daemon{
 		command: command,
 		config:  config,
-
-		defaultMirrors: []string{
-			"https://jockerhub.com",
-			"https://hub.uuuadc.top",
-			"https://docker.anyhub.us.kg",
-			"https://dockerhub.jobcher.com",
-			"https://dockerhub.icu",
-			"https://docker.ckyl.me",
-			"https://docker.awsl9527.cn",
-			"https://hub.20240220.xyz",
-		},
 	}
 }
 
@@ -80,7 +67,7 @@ func (d *Daemon) startup(ctx *context.Context) (err error) {
 		arguments.Argument("storage-driver", d.config.Driver)
 	}
 	// 镜像加速
-	for _, mirror := range d.mirrors() {
+	for _, mirror := range d.command.Mirrors() {
 		arguments.Argument("registry-mirror", mirror)
 	}
 
@@ -97,16 +84,6 @@ func (d *Daemon) startup(ctx *context.Context) (err error) {
 
 func (d *Daemon) check(ctx *context.Context) error {
 	return d.command.Exec(*ctx, args.New().Build().Subcommand("info").Build())
-}
-
-func (d *Daemon) mirrors() (mirrors []string) {
-	mirrors = make([]string, 0, len(d.defaultMirrors))
-	if d.command.Default() {
-		mirrors = append(mirrors, d.defaultMirrors...)
-	}
-	mirrors = append(mirrors, d.config.Mirrors...)
-
-	return
 }
 
 func (d *Daemon) address() string {

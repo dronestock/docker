@@ -15,13 +15,28 @@ type Docker struct {
 	*drone.Base
 
 	binary *config.Binary
+	config *config.Docker
+
+	mirrors []string
 }
 
-func NewDocker(base *drone.Base, binary *config.Binary) *Docker {
+func NewDocker(base *drone.Base, binary *config.Binary, config *config.Docker) *Docker {
 	return &Docker{
 		Base: base,
 
 		binary: binary,
+		config: config,
+
+		mirrors: []string{
+			"https://jockerhub.com",
+			"https://hub.uuuadc.top",
+			"https://docker.anyhub.us.kg",
+			"https://dockerhub.jobcher.com",
+			"https://dockerhub.icu",
+			"https://docker.ckyl.me",
+			"https://docker.awsl9527.cn",
+			"https://hub.20240220.xyz",
+		},
 	}
 }
 
@@ -71,6 +86,16 @@ func (d *Docker) Daemon(ctx *context.Context, arguments *args.Arguments, mark st
 	} else {
 		d.Debug("命令执行成功", fields...)
 	}
+
+	return
+}
+
+func (d *Docker) Mirrors() (mirrors []string) {
+	mirrors = make([]string, 0, len(d.mirrors))
+	if d.Default() {
+		mirrors = append(mirrors, d.mirrors...)
+	}
+	mirrors = append(mirrors, d.config.Mirrors...)
 
 	return
 }
