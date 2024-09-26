@@ -119,6 +119,7 @@ func (s *Setup) writeConfig(_ *context.Context, arguments *args.Arguments) (err 
 	}
 	if nil == err {
 		arguments.Rebuild().Argument("config", path)
+		s.command.Cleanup().File(path).Build()
 	}
 
 	return
