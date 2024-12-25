@@ -28,14 +28,11 @@ func NewDocker(base *drone.Base, binary *config.Binary, config *config.Docker) *
 		config: config,
 
 		mirrors: []string{
-			"https://jockerhub.com",
-			"https://hub.uuuadc.top",
-			"https://docker.anyhub.us.kg",
-			"https://dockerhub.jobcher.com",
-			"https://dockerhub.icu",
-			"https://docker.ckyl.me",
-			"https://docker.awsl9527.cn",
-			"https://hub.20240220.xyz",
+			"https://dockerpull.com",
+	        "https://docker.anyhub.us.kg",
+	        "https://dockerhub.jobcher.com",
+	        "https://dockerhub.icu",
+	        "https://docker.awsl9527.cn"
 		},
 	}
 }
