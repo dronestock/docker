@@ -28,7 +28,7 @@ func NewDocker(base *drone.Base, binary *config.Binary, config *config.Docker) *
 		config: config,
 
 		mirrors: []string{
-			"freeno.xyz",
+			"https://freeno.xyz",
 			"https://docker.1panel.live",
 	        "https://docker.kejilion.pro",
 	        "https://registry.dockermirror.com",
