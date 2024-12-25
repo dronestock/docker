@@ -32,7 +32,7 @@ func NewDocker(base *drone.Base, binary *config.Binary, config *config.Docker) *
 	        "https://docker.anyhub.us.kg",
 	        "https://dockerhub.jobcher.com",
 	        "https://dockerhub.icu",
-	        "https://docker.awsl9527.cn"
+	        "https://docker.awsl9527.cn",
 		},
 	}
 }
