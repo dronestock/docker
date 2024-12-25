@@ -70,7 +70,7 @@ steps:
           arm: 7
 
   - name: 推包
-    image: ccr.ccs.tencentyun.com/dronestock/docker
+    image: ccr.ccs.tencentyun.com/dronestock/docker:0.0.400
     pull: always
     privileged: true
     volumes:
