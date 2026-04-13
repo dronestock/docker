@@ -1,13 +1,13 @@
 module github.com/dronestock/docker
 
-go 1.23
+go 1.24
 
 require (
 	github.com/dronestock/drone v1.2.6
 	github.com/goexl/args v0.0.3
-	github.com/goexl/gox v1.8.9
+	github.com/goexl/gox v1.9.2
 	github.com/goexl/guc v0.1.4
-	github.com/goexl/log v0.0.7
+	github.com/goexl/log v0.1.0
 	github.com/rs/xid v1.6.0
 )
 
